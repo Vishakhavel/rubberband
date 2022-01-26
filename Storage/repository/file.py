@@ -1,4 +1,5 @@
 
+from pydantic import FilePath
 from sqlalchemy.orm import Session
 from fastapi import  status, HTTPException, File, UploadFile
 from .. import schemas, models
@@ -86,12 +87,15 @@ def share(uploaded_file: UploadFile = File(...)):
     
 
 
-def delete_file():
-    try:
-        os.remove("/Users/roviros/Desktop/files_uploaded_cloudwiry/") 
-        return "deleted!"
-    except: 
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"This EMAIL ID was not found in our database!")
+def delete_file(filename:str, email:str):
+    # try:
+    filePath = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{email}/{filename}" #here emasil and the filename will come
+    os.chmod(filePath, 0o777)
+    os.remove(filePath)
+   
+    return "deleted!"
+    # except: 
+    #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"This EMAIL ID was not found in our database!")
 
 
 def rename_file():

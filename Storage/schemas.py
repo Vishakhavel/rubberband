@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from typing import List, Optional
 
+from Storage.database import Base
+
 # class FileBase(BaseModel):
 #     title: str
 #     body:str
@@ -74,3 +76,9 @@ class TokenData(BaseModel):
 
 class ID(BaseModel):
     id:int
+
+class FileName(BaseModel):
+    file_name:str
+
+class Email(BaseModel):
+    email:str

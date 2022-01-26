@@ -90,9 +90,10 @@ async def share_file(uploaded_file: UploadFile = File(...),current_user: schemas
 
 
 @router.delete("/delete")
-async def delete_existing_file():
-
-    return file.delete_file()
+async def delete_existing_file(email_req:schemas.Email, filename_req:schemas.FileName, current_user: schemas.User = Depends(get_current_user)):
+    email = email_req.email
+    filename=filename_req.file_name
+    return file.delete_file(filename,email)
     # os.remove("/Users/roviros/Desktop/files_uploaded_cloudwiry/") 
     # return "deleted!"
 
