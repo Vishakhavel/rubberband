@@ -28,6 +28,9 @@ def authenticate(request:OAuth2PasswordRequestForm = Depends(), db:Session = Dep
     #user_id calculation
 
     user_id = user.id
-    print(user_id)
+    email = user.email
 
-    return {"access_token": access_token, "token_type": "bearer", "user_id": user_id} #sending the user's ID, and the token.
+    print("CURRENT USER ID:",user_id)
+    print("CURRENT EMAIL ID:",email)
+
+    return {"access_token": access_token, "token_type": "bearer", "user_id": user_id, "email":email} #sending the user's ID, and the token.

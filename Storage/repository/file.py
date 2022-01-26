@@ -2,6 +2,7 @@
 from sqlalchemy.orm import Session
 from fastapi import  status, HTTPException, File, UploadFile
 from .. import schemas, models
+import os
 
 # def get_all(db: Session):
 #     files = db.query(models.File).all()
@@ -58,10 +59,59 @@ from .. import schemas, models
 #     return file
 
 
-def upload(uploaded_file: UploadFile = File(...)):
-    file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{uploaded_file.filename}"
+def upload(email:str, uploaded_file: UploadFile = File(...)):
+    print(email)
+    file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{email}/{uploaded_file.filename}"
     with open(file_location, "wb+") as file_object:
         file_object.write(uploaded_file.file.read())
 
     return {"info": f"file '{uploaded_file.filename}' saved at '{file_location}'"}
     return file.upload_file()
+
+def show_files():
+    try:
+        return os.listdir("/Users/roviros/Desktop/files_uploaded_cloudwiry/")
+
+    except:
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail = f"This file was not found in our database!")
+        
+
+def share(uploaded_file: UploadFile = File(...)):
+    try:
+        return {'details':"shared file successfully"}
+
+    except:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"This EMAIL ID was not found in our database!")
+
+    
+
+
+def delete_file():
+    try:
+        os.remove("/Users/roviros/Desktop/files_uploaded_cloudwiry/") 
+        return "deleted!"
+    except: 
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"This EMAIL ID was not found in our database!")
+
+
+def rename_file():
+    try:
+        return "rename successful!"
+    except:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"This file name was not found in our database!")
+
+
+    # file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{uploaded_file.filename}"
+    # with open(file_location, "wb+") as file_object:
+    #     file_object.write(uploaded_file.file.read())
+    # return {"info": f"file '{uploaded_file.filename}' saved at '{file_location}'"}
+
+
+def download_file():
+    return "download successful!"
+
+
+    # file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{uploaded_file.filename}"
+    # with open(file_location, "wb+") as file_object:
+    #     file_object.write(uploaded_file.file.read())
+    # return {"info": f"file '{uploaded_file.filename}' saved at '{file_location}'"}

@@ -53,9 +53,16 @@ get_db = database.get_db
 
 
 @router.post("/upload")
-async def create_upload_file(uploaded_file: UploadFile = File(...), current_user: schemas.User = Depends(get_current_user)):
+async def create_upload_file(request:schemas.ID,uploaded_file: UploadFile = File(...), current_user: schemas.User = Depends(get_current_user)):
+   
+    email = db.query(models.User).filter(models.User.id == request.id).first()
+    print(email)
+ 
+    # print(email)
+    return"email"
 
-    return file.upload(uploaded_file)
+    # return file.upload(email,uploaded_file)
+  
     # file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{id}/{uploaded_file.filename}"
     # with open(file_location, "wb+") as file_object:
     #     file_object.write(uploaded_file.file.read())
@@ -66,36 +73,49 @@ async def create_upload_file(uploaded_file: UploadFile = File(...), current_user
 
 @router.get("/view")
 async def view_all_files():
-    return os.listdir("/Users/roviros/Desktop/files_uploaded_cloudwiry/")
+    return file.show_files()
+    # return os.listdir("/Users/roviros/Desktop/files_uploaded_cloudwiry/")
 
 
 @router.post("/share")
-async def create_upload_file(uploaded_file: UploadFile = File(...), current_user: schemas.User = Depends(get_current_user)):
-    file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{id}/{uploaded_file.filename}"
-    with open(file_location, "wb+") as file_object:
-        file_object.write(uploaded_file.file.read())
-    return {"info": f"file '{uploaded_file.filename}' saved at '{file_location}'"}
+async def share_file(uploaded_file: UploadFile = File(...),current_user: schemas.User = Depends(get_current_user)):
+
+    return file.share(uploaded_file)
+
+    # file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{id}/{uploaded_file.filename}"
+    # with open(file_location, "wb+") as file_object:
+    #     file_object.write(uploaded_file.file.read())
+    # return {"info": f"file '{uploaded_file.filename}' saved at '{file_location}'"}
 
 
 
 @router.delete("/delete")
-async def create_upload_file():
-    os.remove("/Users/roviros/Desktop/files_uploaded_cloudwiry/") 
-    return "deleted!"
+async def delete_existing_file():
+
+    return file.delete_file()
+    # os.remove("/Users/roviros/Desktop/files_uploaded_cloudwiry/") 
+    # return "deleted!"
 
 
 
 @router.put("/rename")
-async def create_upload_file(uploaded_file: UploadFile = File(...), current_user: schemas.User = Depends(get_current_user)):
-    file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{uploaded_file.filename}"
-    with open(file_location, "wb+") as file_object:
-        file_object.write(uploaded_file.file.read())
-    return {"info": f"file '{uploaded_file.filename}' saved at '{file_location}'"}
+async def rename_existing_file(uploaded_file: UploadFile = File(...), current_user: schemas.User = Depends(get_current_user)):
+
+    return file.rename_file()
+
+
+    # file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{uploaded_file.filename}"
+    # with open(file_location, "wb+") as file_object:
+    #     file_object.write(uploaded_file.file.read())
+    # return {"info": f"file '{uploaded_file.filename}' saved at '{file_location}'"}
 
 
 @router.get("/download")
-async def create_upload_file(uploaded_file: UploadFile = File(...), current_user: schemas.User = Depends(get_current_user)):
-    file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{uploaded_file.filename}"
-    with open(file_location, "wb+") as file_object:
-        file_object.write(uploaded_file.file.read())
-    return {"info": f"file '{uploaded_file.filename}' saved at '{file_location}'"}
+async def download_file(uploaded_file: UploadFile = File(...), current_user: schemas.User = Depends(get_current_user)):
+
+    return file.download_file()
+
+    # file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{uploaded_file.filename}"
+    # with open(file_location, "wb+") as file_object:
+    #     file_object.write(uploaded_file.file.read())
+    # return {"info": f"file '{uploaded_file.filename}' saved at '{file_location}'"}
