@@ -6,6 +6,7 @@ import os
 from Storage.repository.authentication import authenticate, check_password
 from .. import schemas, models
 from .. hashing import Hash
+import shutil
 
 def create(request:schemas.User, db:Session):
     
@@ -87,8 +88,9 @@ def delete_user(username:str, password:str, password_confirmation:str, db:Sessio
     #DELETE FOLDER FROM DISK
     try:
         filePath=f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{username}"
-        os.chmod(filePath, 0o777)
-        os.rmdir(filePath) 
+        # os.chmod(filePath, 0o777)
+        # os.rmdir(filePath) 
+        shutil.rmtree(filePath)
         raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="Deleted {username}'s files from disk and database")
     except OSError as e:  ## if failed, report it back to the user ##
         print ("Error: %s - %s." % (e.filename, e.strerror))

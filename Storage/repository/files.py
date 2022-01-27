@@ -92,7 +92,9 @@ def share_file(sender:str,reciever:str,filename:str):
     original = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{sender}/{filename}"
     target = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{reciever}/{filename}"
     shutil.copyfile(original, target)
-    return "done"
+
+    raise JSONResponse(status_code=status.HTTP_200_OK, detail = f"File shared successfully to {reciever}")
+    
     # except:
     #     return "jhi"
 
@@ -132,7 +134,7 @@ def rename_file(email:str,old_name:str,new_name:str):
 
     try:
         os.rename(sourceFilePath, destinationFilePath)
-        return "rename success!"
+        return JSONResponse(status_code=status.HTTP_200_OK, content=f"File {old_name} successfully renamed to {new_name}")
     # print(sourceFilePath)
     # try:
     #     return "rename successful!"
@@ -147,7 +149,8 @@ def rename_file(email:str,old_name:str,new_name:str):
 
 
 def download_file(id:int, email:str, filename:str):
-    return "download successful!"
+
+    return JSONResponse(status_code=status.HTTP_200_OK, content="Deleted file successfully!")
 
 
     # file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{uploaded_file.filename}"
