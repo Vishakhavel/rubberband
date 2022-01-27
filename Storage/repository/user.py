@@ -1,7 +1,8 @@
 from hashlib import new
+from pydantic import FilePath
 from sqlalchemy.orm import Session
 from fastapi import  Response, status, HTTPException
-
+import os
 from Storage.repository.authentication import authenticate, check_password
 from .. import schemas, models
 from .. hashing import Hash
@@ -62,7 +63,7 @@ def get_all_user(db:Session):
 
 
 def delete_user(username:str, password:str, password_confirmation:str, db:Session):
-    user_exists = db.query(models.User).filter(models.User.email == username).first()
+    # user_exists = db.query(models.User).filter(models.User.email == username).first()
     
     #verify if correct password was entered
     if(password!=password_confirmation):
@@ -70,4 +71,27 @@ def delete_user(username:str, password:str, password_confirmation:str, db:Sessio
         # return "Entered passwords don't match!"
     
     # return "hi"
-    return check_password(username,password, password_confirmation, db)
+
+    user = db.query(models.User).filter(models.User.email == username).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"User with EMAIL {username} was not found in our DB!")
+
+
+    if not check_password(user,username,password, db):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail = "Incorrect passwords!")
+    
+    #DELETE FROM DATABASE
+    db.query(models.User).filter(models.User.email == username).delete(synchronize_session=False)
+    db.commit()
+
+    #DELETE FOLDER FROM DISK
+    try:
+        filePath=f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{username}"
+        os.chmod(filePath, 0o777)
+        os.rmdir(filePath) 
+        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="Deleted {username}'s files from disk and database")
+    except OSError as e:  ## if failed, report it back to the user ##
+        print ("Error: %s - %s." % (e.filename, e.strerror))
+        raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Something went wrong while deleting the user's files from the disk")
+
+    # raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail = f"User {username} has been deleted!")
