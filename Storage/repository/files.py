@@ -146,7 +146,7 @@ def rename_file(email:str,old_name:str,new_name:str):
     # return {"info": f"file '{uploaded_file.filename}' saved at '{file_location}'"}
 
 
-def download_file():
+def download_file(id:int, email:str, filename:str):
     return "download successful!"
 
 

@@ -30,7 +30,22 @@ def authenticate(request:OAuth2PasswordRequestForm = Depends(), db:Session = Dep
     user_id = user.id
     email = user.email
 
-    print("CURRENT USER ID:",user_id)
-    print("CURRENT EMAIL ID:",email)
+    # print("CURRENT USER ID:",user_id)
+    # print("CURRENT EMAIL ID:",email)
 
     return {"access_token": access_token, "token_type": "bearer", "user_id": user_id, "email":email} #sending the user's ID, and the token.
+
+def check_password(username:str,password:str,password_confirmation:str, db:Session):
+
+    user = db.query(models.User).filter(models.User.email == username).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"User with EMAIL {username} was not found in our DB!")
+
+    
+    if not Hash.verify(user.password, username):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"Incorrect password!")
+    else:
+        return "jo"
+    
+
+

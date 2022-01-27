@@ -1,6 +1,8 @@
 from hashlib import new
 from sqlalchemy.orm import Session
 from fastapi import  Response, status, HTTPException
+
+from Storage.repository.authentication import authenticate, check_password
 from .. import schemas, models
 from .. hashing import Hash
 
@@ -57,3 +59,15 @@ def get_all_user(db:Session):
     if not users:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f'User with ID {id} not found in our DB')
     return users
+
+
+def delete_user(username:str, password:str, password_confirmation:str, db:Session):
+    user_exists = db.query(models.User).filter(models.User.email == username).first()
+    
+    #verify if correct password was entered
+    if(password!=password_confirmation):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail = "Entered passwords do not match!")
+        # return "Entered passwords don't match!"
+    
+    # return "hi"
+    return check_password(username,password, password_confirmation, db)

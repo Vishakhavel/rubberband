@@ -1,6 +1,8 @@
 import email
 from fileinput import filename
 from urllib import request
+
+from bcrypt import re
 from Storage.oauth2 import get_current_user
 from fastapi import APIRouter, FastAPI, Request, Response, status, Depends, HTTPException, File, UploadFile
 from typing import List, Optional
@@ -141,9 +143,11 @@ async def rename_existing_file(request: schemas.RenameFiles, current_user: schem
 
 
 @router.get("/download")
-async def download_file(uploaded_file: UploadFile = File(...), current_user: schemas.User = Depends(get_current_user)):
-
-    return files.download_file()
+async def download_file(request:schemas.downloadFile, current_user: schemas.User = Depends(get_current_user)):
+    id = request.id
+    email = request.email
+    filename = request.filename
+    return files.download_file(id,email,filename)
 
     # file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{uploaded_file.filename}"
     # with open(file_location, "wb+") as file_object:

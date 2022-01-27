@@ -103,3 +103,13 @@ class shareFile(BaseModel):
     sender: str
     reciever: str
     filename:str
+
+class downloadFile(BaseModel):
+    id:int
+    email:str
+    filename:str
+
+class deleteUser(BaseModel):
+    username:str
+    password: str
+    password_confirmation: str
