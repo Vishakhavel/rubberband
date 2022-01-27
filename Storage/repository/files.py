@@ -6,68 +6,18 @@ from .. import schemas, models
 import os
 import shutil
 from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse
 
+filePath = "/Users/roviros/Desktop/files_uploaded_cloudwiry/"
 
-# def get_all(db: Session):
-#     files = db.query(models.File).all()
-#     print(files)
-#     return files
-
-# def getFilesById(id:int,db:Session):
-#     # user_id = request.user_id
-
-#     files = db.query(models.File).filter(models.File.id==id)
-#     print(files)
-#     #return "hi"
-#     return files
-
-
-# def create(request: schemas.File, db: Session):
-#     new_file = models.File(title=request.title, body = request.body, user_id = request.user_id)
-#     #LOGIC TO GET THE CURRENT USER'S ID
-#     #user_id = 
-
-#     db.add(new_file)
-#     db.commit()
-#     db.refresh(new_file)
-#     return new_file
-
-
-# def destroy(id: int, db: Session):
-#     file = db.query(models.File).filter(models.File.id == id)
-#     if not file:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"File with ID {id} was not found in our DB")
-#     file.delete(synchronize_session=False)
-#     db.commit() #you've to commit after you do anything on the DB
-#     return {'status': f'Deleted ID = {id} successfully'}
-
-
-# def update(id:int, request:schemas.File, db:Session):
-#     #print(request)
-#     # This one is not working if i put request directly in the update bracket
-#     file =db.query(models.File).filter(models.File.id == id)
-#     if not file.first():
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"File with ID {id} was not found in our DB")
-
-#     file.update({'title': request.title, 'body':request.body}, synchronize_session=False)
-#     db.commit()
-#     return 'success'
-
-
-# def get_id(id:int, db:Session):
-#     file = db.query(models.File).filter(models.File.id == id).first()
-#     if not file: # cannot find the entry in the database.
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f'File with ID {id} is not found in our database')
-#         # response.status_code = status.HTTP_404_NOT_FOUND
-#         # return {'detail' : f'File with ID {id} is not found in our database'}
-#     return file
 
 
 def upload_file(email:str, uploaded_file: UploadFile = File(...)):
     print(email)
     print(email[1:-1])
     email = email[1:-1]
-    file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{email}/{uploaded_file.filename}"
+    file_location=os.path.join(filePath, "{email}/{uploaded_file.filename}")
+    # file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{email}/{uploaded_file.filename}"
     with open(file_location, "wb+") as file_object:
         file_object.write(uploaded_file.file.read())
 
@@ -77,6 +27,7 @@ def upload_file(email:str, uploaded_file: UploadFile = File(...)):
 def show_files(email:str):
     try:
         return os.listdir(f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{email}")
+        # return os.listdir(os.path.join(filePath, "{email}"))
 
     except:
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail = f"This file was not found in our database!")
@@ -90,10 +41,17 @@ def share_file(sender:str,reciever:str,filename:str):
     
     # reciever = reciever[1:-1]
     original = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{sender}/{filename}"
+
+    # original = os.path.join(filePath, f"{sender}/{filename}")
+
+
     target = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{reciever}/{filename}"
+
+
+    # target = os.path.join(filePath, f"{reciever}/{filename}")
     shutil.copyfile(original, target)
 
-    raise JSONResponse(status_code=status.HTTP_200_OK, detail = f"File shared successfully to {reciever}")
+    return JSONResponse(status_code=status.HTTP_200_OK, content=f"File shared successfully to {reciever}")
     
     # except:
     #     return "jhi"
@@ -150,7 +108,11 @@ def rename_file(email:str,old_name:str,new_name:str):
 
 def download_file(id:int, email:str, filename:str):
 
-    return JSONResponse(status_code=status.HTTP_200_OK, content="Deleted file successfully!")
+    filePath = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{email}/{filename}"
+    return filePath
+
+    # return JSONResponse(status_code=status.HTTP_200_OK, content="Downloaded file successfully!")
+
 
 
     # file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{uploaded_file.filename}"

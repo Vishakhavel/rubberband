@@ -1,8 +1,9 @@
 import email
 from fileinput import filename
-from urllib import request
-
+from urllib import request, response
+import io
 from bcrypt import re
+from pydantic import FilePath
 from Storage.oauth2 import get_current_user
 from fastapi import APIRouter, FastAPI, Request, Response, status, Depends, HTTPException, File, UploadFile
 from typing import List, Optional
@@ -13,6 +14,12 @@ from .. import oauth2
 from ..repository import files
 from sqlalchemy.orm import Session
 import os
+from io import BytesIO
+import zipfile
+
+
+from fastapi.responses import FileResponse
+
 
 router = APIRouter(
     tags=['Files'],
@@ -142,7 +149,7 @@ async def rename_existing_file(request: schemas.RenameFiles, current_user: schem
     # return {"info": f"file '{uploaded_file.filename}' saved at '{file_location}'"}
 
 
-@router.get("/download")
+@router.get("/download", response_class=FileResponse)
 async def download_file(request:schemas.downloadFile, current_user: schemas.User = Depends(get_current_user)):
     id = request.id
     email = request.email
@@ -153,3 +160,64 @@ async def download_file(request:schemas.downloadFile, current_user: schemas.User
     # with open(file_location, "wb+") as file_object:
     #     file_object.write(uploaded_file.file.read())
     # return {"info": f"file '{uploaded_file.filename}' saved at '{file_location}'"}
+
+
+
+
+    #TESTING FILE DOWNLOAD
+
+@router.get('/test/download', response_class=FileResponse)
+async def download_test_file(request:schemas.downloadFile, current_user: schemas.User = Depends(get_current_user)):
+    id = request.id
+    email = request.email
+    filename = request.filename
+    return files.download_file(id,email,filename)
+
+
+@router.get("/test/files/download/")
+async def sample():
+    email = "vichu@gmail.com"
+    file_list = os.listdir(f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{email}")
+    # file_list = ['E:\\files\image_1.jpg', 'E:\\files\image_2.jpg',
+    #                 'E:\\files\image_3.jpg', 'E:\\files\image_4.jpg',
+    #                 'E:\\files\image_5.jpg']
+
+    append_str = "/Users/roviros/Desktop/files_uploaded_cloudwiry/"
+    file_list_new = [append_str + sub for sub in file_list]
+
+    print(file_list_new)
+
+    with zipfile.ZipFile('final_archive.zip', 'w') as zip:
+        for file in file_list:
+            zip.write(file, compress_type=zipfile.ZIP_DEFLATED)
+
+
+
+@router.get("/files/download")
+async def image_from_id():
+
+    email = "vichu@gmail.com"
+    return FileResponse(f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{email}/OneDrive_1_1-12-2022.zip")
+
+
+@router.get("/files/zip")
+async def zipper():
+    zip_filename = "archive.zip"
+    s = io.BytesIO()
+    zf = zipfile.ZipFile(s, "w")
+    for fpath in filenames:
+        # Calculate path for file in zip
+        fdir, fname = os.path.split(fpath)
+
+        # Add file, at correct path
+        zf.write(fpath, fname)
+
+    # Must close zip for all contents to be written
+    zf.close()
+
+    # Grab ZIP file from in-memory, make response with correct MIME-type
+    resp = Response(s.getvalue(), media_type="application/x-zip-compressed", headers={
+        'Content-Disposition': f'attachment;filename={zip_filename}'
+    })
+
+    return resp
