@@ -1,12 +1,14 @@
+import email
+from fileinput import filename
 from urllib import request
 from Storage.oauth2 import get_current_user
 from fastapi import APIRouter, FastAPI, Request, Response, status, Depends, HTTPException, File, UploadFile
-from typing import List
+from typing import List, Optional
 from .. import schemas #from one directory up in the tree, we're importing the schemas file, that's the double dot.
 from .. import database
 from .. import models
 from .. import oauth2
-from ..repository import file
+from ..repository import files
 from sqlalchemy.orm import Session
 import os
 
@@ -51,15 +53,28 @@ get_db = database.get_db
 # def show(id:int, response: Response, db:Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
 #     return file.get_id(id,db)
 
+# @router.post("/upload/{email}")
+# async def create_upload_file(email:str,file: UploadFile = File(...), queryParams: Optional[str] = None):
+#     print(email)
+#     return files.upload_file(email,file)
+    # print(queryParams)
+    # if queryParams:
+    #     return queryParams
 
-@router.post("/upload")
-async def create_upload_file(request:schemas.ID,uploaded_file: UploadFile = File(...), current_user: schemas.User = Depends(get_current_user)):
+    # print(queryParams.email)
+    # return {"filename": file.filename}
+
+# @router.post("/upload/")
+# async def create_upload_file(uploaded_file: UploadFile = File(...), current_user: schemas.User = Depends(get_current_user), q: Optional[str] = None):
    
-    email = db.query(models.User).filter(models.User.id == request.id).first()
-    print(email)
+#     # email = db.query(models.User).filter(models.User.id == request.id).first()
+#     # print(email)
+
  
-    # print(email)
-    return"email"
+#     print(q.email)
+#     return {"filename":uploaded_file.filename}
+    # return file.upload(email, uploaded_file)
+
 
     # return file.upload(email,uploaded_file)
   
@@ -71,38 +86,52 @@ async def create_upload_file(request:schemas.ID,uploaded_file: UploadFile = File
     # return file.upload_file()
 
 
+@router.post("/upload/{email}")
+async def create_upload_file(email:str,file: UploadFile = File(...), queryParams: Optional[str] = None):
+    print(email)
+    return files.upload_file(email,file)
+
+
 @router.get("/view")
-async def view_all_files():
-    return file.show_files()
+async def view_all_files(request: schemas.viewAllFiles,current_user: schemas.User = Depends(get_current_user) ):
+    return files.show_files(request.email)
     # return os.listdir("/Users/roviros/Desktop/files_uploaded_cloudwiry/")
 
 
+
 @router.post("/share")
-async def share_file(uploaded_file: UploadFile = File(...),current_user: schemas.User = Depends(get_current_user)):
+async def create_upload_file(request:schemas.shareFile):
+    
 
-    return file.share(uploaded_file)
+    sender = request.sender
+    reciever = request.reciever
+    filename=request.filename
 
-    # file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{id}/{uploaded_file.filename}"
-    # with open(file_location, "wb+") as file_object:
-    #     file_object.write(uploaded_file.file.read())
-    # return {"info": f"file '{uploaded_file.filename}' saved at '{file_location}'"}
+    print(reciever)
+    print(sender)
 
+    # reciever = request.reciever
+    # sender =  request.sender
+    # print(request.sender)
+    return files.share_file(sender,reciever,filename)
 
 
 @router.delete("/delete")
-async def delete_existing_file(email_req:schemas.Email, filename_req:schemas.FileName, current_user: schemas.User = Depends(get_current_user)):
-    email = email_req.email
-    filename=filename_req.file_name
-    return file.delete_file(filename,email)
+async def delete_existing_file(request:schemas.deleteFile, current_user: schemas.User = Depends(get_current_user)):
+    email = request.email
+    filename=request.filename
+    return files.delete_file(filename,email)
     # os.remove("/Users/roviros/Desktop/files_uploaded_cloudwiry/") 
     # return "deleted!"
 
 
 
 @router.put("/rename")
-async def rename_existing_file(uploaded_file: UploadFile = File(...), current_user: schemas.User = Depends(get_current_user)):
-
-    return file.rename_file()
+async def rename_existing_file(request: schemas.RenameFiles, current_user: schemas.User = Depends(get_current_user)):
+    old_name = request.oldName
+    new_name = request.newName
+    email = request.email
+    return files.rename_file(email,old_name,new_name)
 
 
     # file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{uploaded_file.filename}"
@@ -114,7 +143,7 @@ async def rename_existing_file(uploaded_file: UploadFile = File(...), current_us
 @router.get("/download")
 async def download_file(uploaded_file: UploadFile = File(...), current_user: schemas.User = Depends(get_current_user)):
 
-    return file.download_file()
+    return files.download_file()
 
     # file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{uploaded_file.filename}"
     # with open(file_location, "wb+") as file_object:

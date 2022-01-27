@@ -1,3 +1,5 @@
+from code import interact
+import email
 from pydantic import BaseModel
 from typing import List, Optional
 
@@ -82,3 +84,22 @@ class FileName(BaseModel):
 
 class Email(BaseModel):
     email:str
+
+class RenameFiles(BaseModel):
+    email:str
+    oldName: str
+    newName: str
+
+class viewAllFiles(BaseModel):
+    id:int
+    email:str
+
+class deleteFile(BaseModel):
+    id:int
+    email:str
+    filename:str
+
+class shareFile(BaseModel):
+    sender: str
+    reciever: str
+    filename:str
