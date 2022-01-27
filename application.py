@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from typing import List
-from . import models   #This means from the same directory, import schemas.
-from .database import engine
-from .routers import authentication, file, user, authentication
+from Storage import models   #This means from the same directory, import schemas.
+from Storage.database import engine
+from Storage.routers import authentication, file, user, authentication
 
 app = FastAPI()
 models.Base.metadata.create_all(engine)
