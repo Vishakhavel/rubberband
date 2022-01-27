@@ -6,3 +6,6 @@ bcrypt
 python-jose
 python-multipart
 aiofiles
+uvicorn[standard]
+websockets
+wsproto
