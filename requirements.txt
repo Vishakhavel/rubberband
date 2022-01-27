@@ -9,4 +9,3 @@ aiofiles
 uvicorn[standard]
 websockets
 wsproto
-psycopg2
