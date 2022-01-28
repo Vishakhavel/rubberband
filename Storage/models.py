@@ -4,6 +4,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 
+# USER MODEL FOR POSTGRES DB
 class User(Base):
 
     __tablename__ = 'users'
