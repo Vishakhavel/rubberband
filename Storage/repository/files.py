@@ -10,7 +10,7 @@ from fastapi.responses import FileResponse
 import zipfile
 
 # filePath = os.environ["PATH"] 
-filePath = "/Users/roviros/Desktop/files_uploaded_cloudwiry"
+filePath = "/home/ec2-user/efs-mount-point/files"
 
 # LOGIC UPLOAD FILE .
 def upload_file(email:str, uploaded_file: UploadFile = File(...)):
