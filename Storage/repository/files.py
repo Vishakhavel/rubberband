@@ -21,10 +21,13 @@ def upload_file(email:str, uploaded_file: UploadFile = File(...)):
 
     #ZIPPING FILES HERE.
 
-    zip_file_name = uploaded_file.filename.split(".")[0]
-    print(zip_file_name)
+    # zip_file_name = uploaded_file.filename.split(".")[0]
+    # print(zip_file_name)
+    # my_zip = zipfile.ZipFile(zip_file_name, 'w')
 
-    my_zip = zipfile.ZipFile()
+    # my_zip.write(file_location)
+
+
 
 
     #END OF ZIPPING LOGIC
