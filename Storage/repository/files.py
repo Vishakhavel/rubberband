@@ -7,6 +7,7 @@ import os
 import shutil
 from fastapi.responses import JSONResponse
 from fastapi.responses import FileResponse
+import zipfile
 
 filePath = "/Users/roviros/Desktop/files_uploaded_cloudwiry/"
 
@@ -17,9 +18,23 @@ def upload_file(email:str, uploaded_file: UploadFile = File(...)):
     print(email[1:-1])
     email = email[1:-1]
     file_location=os.path.join(filePath, "{email}/{uploaded_file.filename}")
+
+    #ZIPPING FILES HERE.
+
+    zip_file_name = uploaded_file.filename.split(".")[0]
+    print(zip_file_name)
+
+    my_zip = zipfile.ZipFile()
+
+
+    #END OF ZIPPING LOGIC
+
     # file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{email}/{uploaded_file.filename}"
     with open(file_location, "wb+") as file_object:
         file_object.write(uploaded_file.file.read())
+
+
+        
 
     return {"info": f"file '{uploaded_file.filename}' saved at '{file_location}'"}
    
