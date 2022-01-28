@@ -9,18 +9,18 @@ import os
 
 #new stuff
 
-# user = os.environ["DB_USER"]
-# password = os.environ["DB_PASS"]
-# host = os.environ["DB_HOST"]
-# port = os.environ["DB_PORT"]
-# database = os.environ["DB_NAME"]
+user = os.environ["DB_USER"]
+password = os.environ["DB_PASS"]
+host = os.environ["DB_HOST"]
+port = os.environ["DB_PORT"]
+database = os.environ["DB_NAME"]
 
 
-user = "vishakhavel"
-password = "vishakhavel123"
-host = "cloudwirydb.cjcritax3n0n.ap-south-1.rds.amazonaws.com"
-port = 5432
-database = "cloudwiryDB"
+# user = "vishakhavel"
+# password = "vishakhavel123"
+# host = "cloudwirydb.cjcritax3n0n.ap-south-1.rds.amazonaws.com"
+# port = 5432
+# database = "cloudwiryDB"
 
 SQLALCHEMY_DATABASE_URL = f"postgresql://{user}:{password}@{host}:{port}/{database}"
 
