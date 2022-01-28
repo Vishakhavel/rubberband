@@ -5,17 +5,6 @@ from typing import List, Optional
 
 from Storage.database import Base
 
-# class FileBase(BaseModel):
-#     title: str
-#     body:str
-#     user_id: int
-
-# class File(FileBase): #Blog extends BlogBase
- 
-#     class Config():
-#         orm_mode = True
-
-
 class User_id(BaseModel):
     user_id:int
 
@@ -30,36 +19,8 @@ class ShowUser(BaseModel):
     email:str
     id: int
 
-    # blogs: List[File] =[]
-
     class Config():
         orm_mode = True
-
-
-
-# class ShowFile(File):
-#     title: str
-#     body:str
-#     creator: ShowUser #since showuser comes before in the line, no error. if this class was defined above the SHowUser, error will be thrown.
-#     class Config():
-#         orm_mode = True
-
-
-# class ShowFile(File):
-#     title: str
-#     body:str
-#     id:int
-#     # creator: ShowUser #since showuser comes before in the line, no error. if this class was defined above the SHowUser, error will be thrown.
-#     # class Config():
-#     #     orm_mode = True
-
-
-# class ShowFileOfUser(File):
-#     title: str
-#     body: str
-#     id:int
-#     class Config():
-#         orm_mode = True
 
 
 class Login(BaseModel):

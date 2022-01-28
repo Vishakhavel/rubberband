@@ -2,16 +2,10 @@ from click import password_option
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-
-
-#new stuff
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
-#end of new stuff
-
-
 
 #new stuff
 
@@ -29,37 +23,14 @@ port = 5432
 database = "cloudwiryDB"
 
 SQLALCHEMY_DATABASE_URL = f"postgresql://{user}:{password}@{host}:{port}/{database}"
-# SQLALCHEMY_DATABASE_URL = "cloudwirydb.cjcritax3n0n.ap-south-1.rds.amazonaws.com"
-
-
-#end of new stuff
-
-
 
 # SQLALCHEMY_DATABASE_URL = "sqlite:///./storage.db"
 
-
-
-
-#old stuff
-
-# engine = create_engine(
-#     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-# )
-
-
-#old stuff ends
-
-#new stuff
-
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
-
-#new stuff ends
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
-
 
 def get_db():
     db = SessionLocal()
