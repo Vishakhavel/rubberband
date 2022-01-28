@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 import os
 from io import BytesIO
 import zipfile
-
+import shutil
 
 from fastapi.responses import FileResponse
 
@@ -99,6 +99,35 @@ get_db = database.get_db
 async def create_upload_file(email:str,file: UploadFile = File(...), queryParams: Optional[str] = None):
     print(email)
     return files.upload_file(email,file)
+    
+
+@router.post("/compress/upload/{email}")
+async def create_upload_file(email:str,file: UploadFile = File(...), queryParams: Optional[str] = None):
+    print(email)
+    return files.zip_upload_file(email,file)
+
+    # email = email[1:-1]
+
+    # # testing zip file
+    # path = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{email}"
+
+    # with zipfile.ZipFile('files.zip', 'w') as my_zip:
+    #     my_zip.write(os.path.join(path, "Cloudwiry Hackathon_file.pdf"))
+    
+
+
+    # filename = "Cloudwiry Hackathon_file.pdf"
+    # original = "file_zip"
+    # # original = os.path.join(filePath, f"{sender}/{filename}")
+    # target = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{email}/{filename}"
+    # # target = os.path.join(filePath, f"{reciever}/{filename}")
+    # shutil.copyfile(original, target)
+
+    # os.remove("")
+    # return files.upload_file(email,file)
+
+    
+
 
 
 @router.get("/view")
@@ -150,11 +179,11 @@ async def rename_existing_file(request: schemas.RenameFiles, current_user: schem
 
 
 @router.get("/download", response_class=FileResponse)
-async def download_file(request:schemas.downloadFile, current_user: schemas.User = Depends(get_current_user)):
-    id = request.id
+async def download_file(request:schemas.deleteFile, current_user: schemas.User = Depends(get_current_user)):
+    # id = request.id
     email = request.email
     filename = request.filename
-    return files.download_file(id,email,filename)
+    return files.download_file(email,filename)
 
     # file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{uploaded_file.filename}"
     # with open(file_location, "wb+") as file_object:
@@ -193,31 +222,33 @@ async def sample():
 
 
 
-@router.get("/files/download")
-async def image_from_id():
+# @router.get("/download", )
+# async def download(request: schemas.deleteFile, current_user: schemas.User = Depends(get_current_user)):
 
-    email = "vichu@gmail.com"
-    return FileResponse(f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{email}/OneDrive_1_1-12-2022.zip")
+#     email = request.email
+#     filename = request.filename
+#     return files.download_file(email,filename)
+#     # return FileResponse(f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{email}/OneDrive_1_1-12-2022.zip")
 
 
-@router.get("/files/zip")
-async def zipper():
-    zip_filename = "archive.zip"
-    s = io.BytesIO()
-    zf = zipfile.ZipFile(s, "w")
-    for fpath in filenames:
-        # Calculate path for file in zip
-        fdir, fname = os.path.split(fpath)
+# @router.get("/files/zip")
+# async def zipper():
+#     zip_filename = "archive.zip"
+#     s = io.BytesIO()
+#     zf = zipfile.ZipFile(s, "w")
+#     for fpath in filenames:
+#         # Calculate path for file in zip
+#         fdir, fname = os.path.split(fpath)
 
-        # Add file, at correct path
-        zf.write(fpath, fname)
+#         # Add file, at correct path
+#         zf.write(fpath, fname)
 
-    # Must close zip for all contents to be written
-    zf.close()
+#     # Must close zip for all contents to be written
+#     zf.close()
 
-    # Grab ZIP file from in-memory, make response with correct MIME-type
-    resp = Response(s.getvalue(), media_type="application/x-zip-compressed", headers={
-        'Content-Disposition': f'attachment;filename={zip_filename}'
-    })
+#     # Grab ZIP file from in-memory, make response with correct MIME-type
+#     resp = Response(s.getvalue(), media_type="application/x-zip-compressed", headers={
+#         'Content-Disposition': f'attachment;filename={zip_filename}'
+#     })
 
-    return resp
+#     return resp

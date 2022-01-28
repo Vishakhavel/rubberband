@@ -17,19 +17,12 @@ def upload_file(email:str, uploaded_file: UploadFile = File(...)):
     print(email)
     print(email[1:-1])
     email = email[1:-1]
-    file_location=os.path.join(filePath, "{email}/{uploaded_file.filename}")
-
+    file_location=os.path.join(filePath, f"{email}/{uploaded_file.filename}")
     #ZIPPING FILES HERE.
-
     # zip_file_name = uploaded_file.filename.split(".")[0]
     # print(zip_file_name)
     # my_zip = zipfile.ZipFile(zip_file_name, 'w')
-
     # my_zip.write(file_location)
-
-
-
-
     #END OF ZIPPING LOGIC
 
     # file_location = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{email}/{uploaded_file.filename}"
@@ -40,6 +33,24 @@ def upload_file(email:str, uploaded_file: UploadFile = File(...)):
         
 
     return {"info": f"file '{uploaded_file.filename}' saved at '{file_location}'"}
+
+
+# def zip_upload_file(email:str, uploaded_file: UploadFile = File(...)):
+#     print(email)
+#     print(email[1:-1])
+#     email = email[1:-1]
+#     file_location=os.path.join(filePath, f"{email}/{uploaded_file.filename}")
+
+#     #zipping files and uploading the zipped file.
+
+    
+
+#     with open(file_location, "wb+") as file_object:
+#         file_object.write(uploaded_file.file.read())
+
+
+
+#     return {"info": f"file '{uploaded_file.filename}' saved at '{file_location}'"}
    
 
 def show_files(email:str):
@@ -124,10 +135,14 @@ def rename_file(email:str,old_name:str,new_name:str):
     # return {"info": f"file '{uploaded_file.filename}' saved at '{file_location}'"}
 
 
-def download_file(id:int, email:str, filename:str):
+def download_file(email:str, filename:str):
 
-    filePath = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{email}/{filename}"
-    return filePath
+    try:
+        filePath = f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{email}/{filename}"
+        return filePath
+    
+    except:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = "This file name was not found in our database!")
 
     # return JSONResponse(status_code=status.HTTP_200_OK, content="Downloaded file successfully!")
 
