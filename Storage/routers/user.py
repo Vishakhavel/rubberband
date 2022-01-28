@@ -17,11 +17,15 @@ router = APIRouter(
 get_db = database.get_db
 
 
+filePath = "/home/ec2-user/efs-mount-point/files"
+
+
+
 # CREATE A NEW FOLDER WITH THE NEW USER'S EMAIL AS THE NAME.
 @router.post('/', response_model = schemas.ShowUser)
 def create_user(request: schemas.User, db:Session = Depends(get_db)):
     folder = request.email
-    os.mkdir(f'/Users/roviros/Desktop/files_uploaded_cloudwiry/{folder}')
+    os.mkdir(f'{filePath}/{folder}')
     return user.create(request,db)
 
     
