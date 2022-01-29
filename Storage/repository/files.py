@@ -10,7 +10,7 @@ from fastapi.responses import FileResponse
 import zipfile
 
 # filePath = os.environ["PATH"] 
-filePath = "/home/ec2-user/efs-mount-point/files"
+filePath = "/home/ec2-user/efs-mount-point/files/"
 os.chmod(filePath, 0o777)
 
 
