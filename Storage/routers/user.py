@@ -19,10 +19,10 @@ get_db = database.get_db
 
 #old EFS file path
 # filePath = "/home/ec2-user/efs-mount-point/files"
-os.system("sudo mkdir /ef/files/checker_folder")
+# os.system("sudo mkdir /ef/files/checker_folder")
 
 #new EFS file path
-filePath = "/efs/files"
+filePath = "/home/ec2-user/efs-mount-point"
 
 
 
