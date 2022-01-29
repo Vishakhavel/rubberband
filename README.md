@@ -8,8 +8,6 @@ This application has been deployed to **AWS**.
 
 ## Architecture
 <img width="863" alt="Screen Shot 2022-01-29 at 11 39 53 AM" src="https://user-images.githubusercontent.com/54572908/151649919-c3a200a8-11dd-4b49-b12d-e484da734572.png">
-<img width="863" src="https://user-images.githubusercontent.com/54572908/151649947-e142b2ec-ada2-468c-8292-65ff9343b78d.png">
-
 
 
 ## Installation
