@@ -30,6 +30,7 @@ filePath = "/home/ec2-user/efs-mount-point"
 @router.post('/', response_model = schemas.ShowUser)
 def create_user(request: schemas.User, db:Session = Depends(get_db)):
     folder = request.email
+    os.chmod(filePath, 0o777)
     os.mkdir(f'{filePath}/{folder}')
     return user.create(request,db)
 
