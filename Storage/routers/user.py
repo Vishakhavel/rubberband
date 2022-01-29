@@ -22,7 +22,7 @@ get_db = database.get_db
 # os.system("sudo mkdir /ef/files/checker_folder")
 
 #new EFS file path
-filePath = "/home/ec2-user/efs-mount-point"
+filePath = "/efs/files/"
 
 
 
