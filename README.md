@@ -4,6 +4,7 @@
 
 This codebase is my submission for the hackathon conducted by *Cloudwiry*, titled '**Storage - An ocean of bits & bytes**'
 
+[![hi](https://img.shields.io/badge/Framework-FastAPI-brightgreen)](https://fastapi.tiangolo.com/)
 This application has been deployed to **AWS**.
 
 ## Architecture
