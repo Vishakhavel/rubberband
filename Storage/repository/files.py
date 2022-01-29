@@ -16,7 +16,7 @@ import zipfile
 
 
 #new file path
-filePath = "/efs/files"
+filePath = "/efs/files/"
 
 # os.chmod(filePath, 0o777)
 
