@@ -30,6 +30,8 @@ def upload_file(email:str, uploaded_file: UploadFile = File(...)):
     print(filePath)
     file_location=os.path.join(filePath, f"{email}/{uploaded_file.filename}")
 
+# REPLACING WB+ WITH W+
+    # with open(file_location, "wb+") as file_object:
     with open(file_location, "wb+") as file_object:
         file_object.write(uploaded_file.file.read())
 
