@@ -11,6 +11,8 @@ import zipfile
 
 # filePath = os.environ["PATH"] 
 filePath = "/home/ec2-user/efs-mount-point/files"
+os.chmod(filePath, 0o777)
+
 
 # LOGIC UPLOAD FILE .
 def upload_file(email:str, uploaded_file: UploadFile = File(...)):
