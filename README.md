@@ -48,9 +48,6 @@ pip3 install -r requirements.txt
 ```bash
 uvicorn application:app --reload
 ```
-Your terminal should now look like this:
-
-[![asciicast](https://asciinema.org/a/X1MtHZ2kOawAJF6mICk3Nv1iJ.svg)](https://asciinema.org/a/X1MtHZ2kOawAJF6mICk3Nv1iJ)
 
 ## Usage
 Create a new Postman environment and create these variables.
