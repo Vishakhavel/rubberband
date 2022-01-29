@@ -17,7 +17,8 @@ def upload_file(email:str, uploaded_file: UploadFile = File(...)):
     print(email[1:-1])
     email = email[1:-1]
     file_location=os.path.join(filePath, f"{email}/{uploaded_file.filename}")
-
+    
+        
     with open(file_location, "wb+") as file_object:
         file_object.write(uploaded_file.file.read())
 
@@ -29,7 +30,7 @@ def show_files(email:str):
         return os.listdir(f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{email}")
 
     except:
-        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail = f"This file was not found in our database!")
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail = f"Oopss...Something went wrong!")
         
 # LOGIC TO SHARE FILE WITH OTHER USER BY EMAIL,.
 def share_file(sender:str,reciever:str,filename:str):
@@ -45,7 +46,7 @@ def share_file(sender:str,reciever:str,filename:str):
         return JSONResponse(status_code=status.HTTP_200_OK, content=f"File shared successfully to {reciever}")
     
     except:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail = f"This file doesn't exist in the current user's account!")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail = f"This file - '{filename}' doesn't exist in {sender}'s account!")
     
 # LOGIC TO DELETE FILE BY NAME.
 def delete_file(filename:str, email:str):
@@ -56,7 +57,7 @@ def delete_file(filename:str, email:str):
         return JSONResponse(status_code=status.HTTP_200_OK, content="Deleted file successfully!")
    
     except: 
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail = f"hmmmmm... Something went wrong.")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail = f"This file - '{filename}' doesn't exist in {email}'s account!")
 
 # LOGIC TO RENAME THE FILE USING OLD AND NEW NAMES.
 def rename_file(email:str,old_name:str,new_name:str):

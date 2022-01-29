@@ -30,7 +30,7 @@ get_db = database.get_db
 
 # UPLOAD FILE.
 @router.post("/upload/{email}")
-async def create_upload_file(email:str,file: UploadFile = File(...), queryParams: Optional[str] = None):
+async def create_upload_file(email:str,file: UploadFile = File(...), queryParams: Optional[str] = None, current_user: schemas.User = Depends(get_current_user)) :
     print(email)
     return files.upload_file(email,file)
     
@@ -44,7 +44,7 @@ async def view_all_files(request: schemas.viewAllFiles,current_user: schemas.Use
 
 # SHARE FILES WITH OTHER USER.
 @router.post("/share")
-async def create_upload_file(request:schemas.shareFile):
+async def create_upload_file(request:schemas.shareFile,current_user: schemas.User = Depends(get_current_user)):
     sender = request.sender
     reciever = request.reciever
     filename=request.filename
