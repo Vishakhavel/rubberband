@@ -24,7 +24,7 @@ get_db = database.get_db
 #new EFS file path
 filePath = "/efs/files/"
 
-
+#hi
 
 # CREATE A NEW FOLDER WITH THE NEW USER'S EMAIL AS THE NAME.
 @router.post('/', response_model = schemas.ShowUser)
