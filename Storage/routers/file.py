@@ -52,12 +52,33 @@ async def create_upload_file(request:schemas.shareFile,current_user: schemas.Use
     print("SENDER: ", sender)
     return files.share_file(sender,reciever,filename)
 
-# DELETE USER AFTER VERIFYING PASSWORD.
+# DELETE FILE.
 @router.delete("/delete")
 async def delete_existing_file(request:schemas.deleteFile, current_user: schemas.User = Depends(get_current_user)):
     email = request.email
     filename=request.filename
-    return files.delete_file(filename,email)
+
+
+    return files.move_to_trash(filename, email)
+
+
+
+    # return files.delete_file(filename,email)
+
+# @router.delete("/trash/empty")
+# async def delete_existing_file(request:schemas.deleteFile, current_user: schemas.User = Depends(get_current_user)):
+#     email = request.email
+#     filename="trash/"+request.filename
+
+#     return files.delete_file(filename,email)
+
+
+@router.delete("/trash/empty")
+async def empty_trash(request:schemas.Email, current_user: schemas.User = Depends(get_current_user)):
+    email = request.email
+    return files.empty_trash_of_user(email)
+
+
    
 
 
@@ -75,3 +96,19 @@ async def download_file(request:schemas.deleteFile, current_user: schemas.User =
     email = request.email
     filename = request.filename
     return files.download_file(email,filename)
+
+
+
+@router.get("/trash/view")
+async def view_trash(request:schemas.Email, current_user: schemas.User = Depends(get_current_user)):
+    email = request.email
+    return files.view_trash(email)
+
+@router.get("/trash/recover")
+async def recover_file_from_trash(request: schemas.deleteFile, current_user: schemas.User = Depends(get_current_user)):
+    email = request.email
+    filename = request.filename
+
+    print(email)
+    print(filename)
+    return files.recover_file_from_trash(filename, email)

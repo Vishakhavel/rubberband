@@ -24,7 +24,17 @@ def create(request:schemas.User, db:Session):
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
-        return new_user
+        folder = request.email
+        try:
+
+            os.mkdir(f'/Users/roviros/Desktop/files_uploaded_cloudwiry/{folder}')
+            #added trash folder
+            os.mkdir(f'/Users/roviros/Desktop/files_uploaded_cloudwiry/{folder}_trash')
+            return new_user
+        
+        except:
+            email = request.email
+            raise HTTPException(status_code = status.HTTP_409_CONFLICT, detail = f"Folder could not be created for user {email}")
 
 # GET ALL USERS.
 def get_all_user(db:Session):
@@ -50,11 +60,14 @@ def delete_user(username:str, password:str, password_confirmation:str, db:Sessio
     db.query(models.User).filter(models.User.email == username).delete(synchronize_session=False)
     db.commit()
 
-    #DELETE USER'S FOLDER FROM DISK
+    #DELETE USER'S FOLDER AND TRASH FROM DISK
     try:
         filePath=f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{username}"
-        
         shutil.rmtree(filePath)
+
+        # #DELETING TRASH
+        # filePathTrash=f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{username}/trash"
+        # shutil.rmtree(filePathTrash)
         raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail=f"Deleted {username}'s files and account from disk and database")
     except OSError as e:  ## if failed, report it back to the user ##
         print ("Error: %s - %s." % (e.filename, e.strerror))

@@ -20,8 +20,6 @@ get_db = database.get_db
 # CREATE A NEW FOLDER WITH THE NEW USER'S EMAIL AS THE NAME.
 @router.post('/', response_model = schemas.ShowUser)
 def create_user(request: schemas.User, db:Session = Depends(get_db)):
-    folder = request.email
-    os.mkdir(f'/Users/roviros/Desktop/files_uploaded_cloudwiry/{folder}')
     return user.create(request,db)
 
     
