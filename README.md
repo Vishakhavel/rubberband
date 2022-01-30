@@ -1,4 +1,4 @@
-# A Distributed File Storage system.
+# "Storage - An ocean of bits & bytes"
 <p align = "center">
  <img src="https://user-images.githubusercontent.com/54572908/151648343-68e9057e-44ee-4003-b829-8aec95707005.png"/>
 
