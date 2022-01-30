@@ -18,6 +18,10 @@ from io import BytesIO
 import zipfile
 import shutil
 from fastapi.responses import FileResponse
+from dotenv import load_dotenv
+
+load_dotenv()  # take environment variables from .env.
+
 
 # INITIALIZING ROUTER.
 router = APIRouter(

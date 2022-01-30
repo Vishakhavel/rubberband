@@ -33,7 +33,7 @@ def upload_file(email:str, uploaded_file: UploadFile = File(...)):
     file_location=os.path.join(filePath, f"{email}/{uploaded_file.filename}")
     
         
-    with open(file_location, "wb+") as file_object:
+    with open(file_location, "w+") as file_object:
         file_object.write(uploaded_file.file.read())\
         
     # print(os.ge)
@@ -89,6 +89,7 @@ def show_files(email:str):
         return os.listdir(f"{filePath}/{email}")
 
     except:
+        print(f"{filePath}/{email}")
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail = f"Oopss...Something went wrong!")
         
 # LOGIC TO SHARE FILE WITH OTHER USER BY EMAIL,.

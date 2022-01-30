@@ -8,8 +8,12 @@ from Storage.repository.authentication import authenticate, check_password
 from .. import schemas, models
 from .. hashing import Hash
 import shutil
+from dotenv import load_dotenv
 
-filePath = "/Users/roviros/Desktop/files_uploaded_cloudwiry"
+load_dotenv()  # take environment variables from .env.
+
+
+filePath = os.getenv("BASE_DIR")
 #CREATE A NEW USER.
 def create(request:schemas.User, db:Session):
     

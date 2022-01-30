@@ -6,6 +6,10 @@ from Storage.oauth2 import get_current_user
 from ..repository import user
 from typing import List
 import os
+from dotenv import load_dotenv
+
+load_dotenv()  # take environment variables from .env.
+
 
 # INITIALIZING ROUTER
 router = APIRouter(
