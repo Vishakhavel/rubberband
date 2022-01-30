@@ -13,15 +13,16 @@ This codebase is my submission for the hackathon conducted by *Cloudwiry*, title
  <img src ="https://user-images.githubusercontent.com/54572908/151702378-e11a4a12-239e-492d-87df-5075be2e946f.png"/>
  </p>
  
- <p align = "center">
+ <p>
  Stack: 
  <ol>
- <li> AWS RDS - User data storage </li>
- <li>AWS Elastic Beanstalk - managed servers </li>
- <li> AWS Route53 - DNS </li>
+ <li> AWS EFS - Distributed storage disk <//li>
+ <li> AWS RDS (postgres) - User data storage </li>
+ <li> AWS Elastic Beanstalk - Managed servers, Application Load Balancing </li>
+ <li> AWS Route53 - DNS, Routing </li>
  <li> AWS Codepipeline, Cloudwatch - CICD </li>
  <li> FastAPI - Web framework </li>
- 
+ </ol>
  </p>
 
 ## Description:
