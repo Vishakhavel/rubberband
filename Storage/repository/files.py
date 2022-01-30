@@ -26,35 +26,43 @@ def upload_file(email:str, uploaded_file: UploadFile = File(...)):
 
     file_location=os.path.join(filePath, f"{email}/{uploaded_file.filename}")
     
-        
-    with open(file_location, "wb+") as file_object:
-        file_object.write(uploaded_file.file.read())
-        
+    try:
+        with open(file_location, "wb+") as file_object:
+            file_object.write(uploaded_file.file.read())
+            
 
-    return {"info": f"file '{uploaded_file.filename}' has been successfully uploaded to your account"}
+        return {"info": f"file '{uploaded_file.filename}' has been successfully uploaded to your account"}
+
+    except:
+        raise HTTPException(status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail = f"Oopss...Something went wrong!")
+
 
 # LOGIC TO ZIP AND UPLOAD FILE.
 def upload_and_zip_file(email:str, uploaded_file: UploadFile = File(...)):
-    print(email)
-    print(email[1:-1])
-    email = email[1:-1]
-    filename = uploaded_file.filename
-    zip_filename = uploaded_file.filename.split(".")[0]
-    print(zip_filename)
-    file_location=os.path.join(filePath, f"{email}/{uploaded_file.filename}")        
-    with open(file_location, "wb+") as file_object:
-        file_object.write(uploaded_file.file.read())\
+    try:
+        print(email)
+        print(email[1:-1])
+        email = email[1:-1]
+        filename = uploaded_file.filename
+        zip_filename = uploaded_file.filename.split(".")[0]
+        print(zip_filename)
+        file_location=os.path.join(filePath, f"{email}/{uploaded_file.filename}")        
+        with open(file_location, "wb+") as file_object:
+            file_object.write(uploaded_file.file.read())\
 
-    #ZIPPING THE FILE AND STORING IT.
-    zip_file = zipfile.ZipFile(f'{zip_filename}.zip', 'w')
-    zip_file.write(f'{filePath}/{email}/{filename}', compress_type = zipfile.ZIP_DEFLATED)
-    zip_file.close()
-    print("zipped")
-    shutil.copy(f'{current_file_path}/{zip_filename}.zip',f'{filePath}/{email}')
-    os.remove(f"/{current_file_path}/{zip_filename}.zip")
-    os.remove(f'{file_location}')
+        #ZIPPING THE FILE AND STORING IT.
+        zip_file = zipfile.ZipFile(f'{zip_filename}.zip', 'w')
+        zip_file.write(f'{filePath}/{email}/{filename}', compress_type = zipfile.ZIP_DEFLATED)
+        zip_file.close()
+        print("zipped")
+        shutil.copy(f'{current_file_path}/{zip_filename}.zip',f'{filePath}/{email}')
+        os.remove(f"/{current_file_path}/{zip_filename}.zip")
+        os.remove(f'{file_location}')
 
-    return {"info": f"file '{uploaded_file.filename}' saved as '{zip_filename}.zip'"}
+        return {"info": f"file '{uploaded_file.filename}' saved as '{zip_filename}.zip'"}
+    
+    except:
+        raise HTTPException(status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail = f"Oopss...Something went wrong!")
  
 
 # LOGIC SHOW ALL FILES OF USER.
