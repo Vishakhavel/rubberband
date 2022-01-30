@@ -19,7 +19,7 @@ This application has been deployed to AWS Beanstalk. Here is the deployed URL:
 [Cloudwiry Application](http://cloudwiry-backend-fastapi.ap-south-1.elasticbeanstalk.com/docs) 
 
 
-### Features:
+## Features:
 
 - [x] User Account creation/deletion
 - [x] User Authentication, Password Encryption and API Protection
@@ -29,7 +29,7 @@ This application has been deployed to AWS Beanstalk. Here is the deployed URL:
 - [x] Autoscaling, Load Balancing and Distributed file storage
 - [x] CICD for faster bug fixes and quicker releases
 
-# Instructions:
+## Instructions:
 
 All you need to do is download the postman collection file and start testing out the APIs. However, if you feel the need to run the server locally:
 1. Clone this repository
@@ -58,10 +58,8 @@ uvicorn application:app --reload
 ```
 
 ## Usage
-Create a new Postman environment and create these variables.
-Download this [Postman collection](https://drive.google.com/file/d/1ngA5W9vZWvkGp0QMgqNKU6DrZfguDFzV/view?usp=sharing) file, open it in postman and use it to test the application, after creating the environment variables as explained in the video. 
+Download this [Postman collection](https://drive.google.com/file/d/1ngA5W9vZWvkGp0QMgqNKU6DrZfguDFzV/view?usp=sharing) file, open it in postman and use it to test the application, after creating the environment and the environment variables as explained in the video. 
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
 Please make sure to update tests as appropriate.
