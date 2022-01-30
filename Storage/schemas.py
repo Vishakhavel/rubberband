@@ -1,8 +1,7 @@
 from code import interact
 import email
-from pydantic import BaseModel
+from pydantic import BaseModel, BaseSettings
 from typing import List, Optional
-
 from Storage.database import Base
 
 class User_id(BaseModel):
@@ -74,3 +73,13 @@ class deleteUser(BaseModel):
     username:str
     password: str
     password_confirmation: str
+
+
+# env vars
+
+class Settings(BaseSettings):
+    ...
+
+    class Config:
+        env_file = '.env'
+        env_file_encoding = 'utf-8'

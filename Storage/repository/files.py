@@ -1,13 +1,19 @@
 
+from inspect import formatannotationrelativeto
 from pydantic import FilePath
 from sqlalchemy.orm import Session
 from fastapi import  status, HTTPException, File, UploadFile
 from .. import schemas, models
 import os
 import shutil
-from fastapi.responses import JSONResponse
-from fastapi.responses import FileResponse
+from fastapi.responses import JSONResponse, FileResponse
+# from fastapi.responses import FileResponse
 import zipfile
+from dotenv import load_dotenv
+
+load_dotenv()  # take environment variables from .env.
+
+SOME_CONFIG_I_NEED = os.environ.get("SOME_CONFIG_I_NEED")
 
 filePath = "/Users/roviros/Desktop/files_uploaded_cloudwiry"
 
@@ -16,13 +22,65 @@ def upload_file(email:str, uploaded_file: UploadFile = File(...)):
     print(email)
     print(email[1:-1])
     email = email[1:-1]
+    filename = uploaded_file.filename
+    zip_filename = uploaded_file.filename.split(".")[0]
+    print(zip_filename)
+    print(SOME_CONFIG_I_NEED)  # This will prin
+
+
+
     file_location=os.path.join(filePath, f"{email}/{uploaded_file.filename}")
     
         
     with open(file_location, "wb+") as file_object:
-        file_object.write(uploaded_file.file.read())
+        file_object.write(uploaded_file.file.read())\
+        
+    # print(os.ge)
 
-    return {"info": f"file '{uploaded_file.filename}' saved at '{file_location}'"}
+    return {"info": f"file '{uploaded_file.filename}' has been successfully uploaded to your account"}
+
+    
+    #ZIPPING THE FILE AND STORING IT.
+
+    # zip_file = zipfile.ZipFile(f'{zip_filename}.zip', 'w')
+    # zip_file.write(f'{filePath}/{email}/{filename}', compress_type = zipfile.ZIP_DEFLATED)
+    # zip_file.close()
+    # print("zipped")
+    # shutil.copy(f'/Users/roviros/Desktop/hackathon/{zip_filename}.zip',f'{filePath}/{email}')
+    # os.remove(f"/Users/roviros/Desktop/hackathon/{zip_filename}.zip")
+    # os.remove(f'{file_location}')
+
+    # return {"info": f"file '{uploaded_file.filename}' saved as '{zip_filename}.zip'"}
+
+    #END OF ZIPPING THE FILE LOGIC.
+
+
+
+def upload_and_zip_file(email:str, uploaded_file: UploadFile = File(...)):
+    print(email)
+    print(email[1:-1])
+    email = email[1:-1]
+    filename = uploaded_file.filename
+    zip_filename = uploaded_file.filename.split(".")[0]
+    print(zip_filename)
+    file_location=os.path.join(filePath, f"{email}/{uploaded_file.filename}")        
+    with open(file_location, "wb+") as file_object:
+        file_object.write(uploaded_file.file.read())\
+
+    # return {"info": f"file '{uploaded_file.filename}' saved as '{zip_filename}'"}
+    #ZIPPING THE FILE AND STORING IT.
+
+    zip_file = zipfile.ZipFile(f'{zip_filename}.zip', 'w')
+    zip_file.write(f'{filePath}/{email}/{filename}', compress_type = zipfile.ZIP_DEFLATED)
+    zip_file.close()
+    print("zipped")
+    shutil.copy(f'/Users/roviros/Desktop/hackathon/{zip_filename}.zip',f'{filePath}/{email}')
+    os.remove(f"/Users/roviros/Desktop/hackathon/{zip_filename}.zip")
+    os.remove(f'{file_location}')
+
+    return {"info": f"file '{uploaded_file.filename}' saved as '{zip_filename}.zip'"}
+
+    #END OF ZIPPING THE FILE LOGIC
 
 # LOGIC SHOW ALL FILES OF USER.
 def show_files(email:str):
@@ -46,7 +104,7 @@ def share_file(sender:str,reciever:str,filename:str):
         return JSONResponse(status_code=status.HTTP_200_OK, content=f"File shared successfully to {reciever}")
     
     except:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail = f"This file - '{filename}' doesn't exist in {sender}'s account!")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail = f"Please check if the filename: '{filename}' and the username of the receiver: '{reciever}' are correct and try again.")
     
 # LOGIC TO DELETE FILE BY NAME.
 # def delete_file(filename:str, email:str):
@@ -123,7 +181,7 @@ def empty_trash_of_user(email:str):
         return JSONResponse(status_code=status.HTTP_200_OK, content="Trash is now empty!")
 
     except:
-        raise HTTPException(status_code=status.HTTP_200_OK, detail = "Trash is now empty!")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail = "Trash is already empty!")
 
 
 
@@ -132,7 +190,7 @@ def view_trash(email:str):
         return os.listdir(f"{filePath}/{email}_trash")
 
     except:
-        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail = f"Oopss...Something went wrong!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail = f"Oopss...Looks like something went wrong from our side!")
 
 
 def recover_file_from_trash(filename:str, email:str):

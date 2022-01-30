@@ -2,13 +2,14 @@ from hashlib import new
 from pydantic import FilePath
 from sqlalchemy.orm import Session
 from fastapi import  Response, status, HTTPException
+from fastapi.responses import JSONResponse
 import os
 from Storage.repository.authentication import authenticate, check_password
 from .. import schemas, models
 from .. hashing import Hash
 import shutil
 
-
+filePath = "/Users/roviros/Desktop/files_uploaded_cloudwiry"
 #CREATE A NEW USER.
 def create(request:schemas.User, db:Session):
     
@@ -27,9 +28,9 @@ def create(request:schemas.User, db:Session):
         folder = request.email
         try:
 
-            os.mkdir(f'/Users/roviros/Desktop/files_uploaded_cloudwiry/{folder}')
+            os.mkdir(f'{filePath}/{folder}')
             #added trash folder
-            os.mkdir(f'/Users/roviros/Desktop/files_uploaded_cloudwiry/{folder}_trash')
+            os.mkdir(f'{filePath}/{folder}_trash')
             return new_user
         
         except:
@@ -62,13 +63,17 @@ def delete_user(username:str, password:str, password_confirmation:str, db:Sessio
 
     #DELETE USER'S FOLDER AND TRASH FROM DISK
     try:
-        filePath=f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{username}"
-        shutil.rmtree(filePath)
+        # fileLocation=f"{filePath}/{username}"
+        shutil.rmtree(f"{filePath}/{username}")
+        shutil.rmtree(f"{filePath}/{username}_trash")
+
+        # trashFilePath = f"{filePath}/{username}_trash"
 
         # #DELETING TRASH
         # filePathTrash=f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{username}/trash"
         # shutil.rmtree(filePathTrash)
-        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail=f"Deleted {username}'s files and account from disk and database")
+        return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content=f"Deleted {username}'s files and account from disk and database")
+        # raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail=f"Deleted {username}'s files and account from disk and database")
     except OSError as e:  ## if failed, report it back to the user ##
         print ("Error: %s - %s." % (e.filename, e.strerror))
         raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Something went wrong while deleting the user's files from the disk")

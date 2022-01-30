@@ -30,9 +30,16 @@ get_db = database.get_db
 
 # UPLOAD FILE.
 @router.post("/upload/{email}")
-async def create_upload_file(email:str,file: UploadFile = File(...), queryParams: Optional[str] = None, current_user: schemas.User = Depends(get_current_user)) :
+async def upload_file(email:str,file: UploadFile = File(...), queryParams: Optional[str] = None, current_user: schemas.User = Depends(get_current_user)) :
     print(email)
     return files.upload_file(email,file)
+
+
+@router.post("/zip/upload/{email}")
+async def upload_zip_file(email:str,file: UploadFile = File(...), queryParams: Optional[str] = None, current_user: schemas.User = Depends(get_current_user)) :
+    print(email)
+    return files.upload_and_zip_file(email,file)
+
     
 
 # VIEW ALL FILES.

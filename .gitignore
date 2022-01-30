@@ -1,2 +1,4 @@
 __pycache__
 cloudwiry
+.env
+Storage/.env
