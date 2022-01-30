@@ -15,11 +15,12 @@ This codebase is my submission for the hackathon conducted by *Cloudwiry*, title
  
  <p align = "center">
  Stack: 
- 1. AWS RDS - User data storage
- 2. AWS Elastic Beanstalk - managed servers
- 3. AWS Route53 - DNS
- 4. AWS Codepipeline, Cloudwatch - CICD
- 5. FastAPI - Web framework
+ <ol>
+ <li> AWS RDS - User data storage </li>
+ <li>AWS Elastic Beanstalk - managed servers </li>
+ <li> AWS Route53 - DNS </li>
+ <li> AWS Codepipeline, Cloudwatch - CICD </li>
+ <li> FastAPI - Web framework </li>
  
  </p>
 
