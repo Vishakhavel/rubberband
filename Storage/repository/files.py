@@ -8,7 +8,8 @@ import shutil
 from fastapi.responses import JSONResponse
 from fastapi.responses import FileResponse
 import zipfile
-
+from dotenv import load_dotenv
+load_dotenv()
 # filePath = os.environ["PATH"] 
 
 #old file path
@@ -16,7 +17,9 @@ import zipfile
 
 
 #new file path
-filePath = "/efs/files/"
+# filePath = "/efs/files/"
+
+filePath = os.getenv("BASE_FILE_DIR")
 
 # os.chmod(filePath, 0o777)
 
