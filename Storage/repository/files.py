@@ -15,7 +15,8 @@ load_dotenv()  # take environment variables from .env.
 
 SOME_CONFIG_I_NEED = os.environ.get("SOME_CONFIG_I_NEED")
 
-filePath = "/Users/roviros/Desktop/files_uploaded_cloudwiry"
+filePath = os.getenv("BASE_FILE_DIR")
+print("file path from env vars: ",filePath)
 
 # LOGIC UPLOAD FILE .
 def upload_file(email:str, uploaded_file: UploadFile = File(...)):
