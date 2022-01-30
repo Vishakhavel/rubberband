@@ -1,5 +1,6 @@
 # A Distributed File Storage system.
 <p align = "center">
+ <img src="https://user-images.githubusercontent.com/54572908/151648343-68e9057e-44ee-4003-b829-8aec95707005.png"/>
 ![☁️_A_Storage_Solution_☁️](https://user-images.githubusercontent.com/54572908/151648343-68e9057e-44ee-4003-b829-8aec95707005.png)
  </p>
 
@@ -12,8 +13,11 @@ This codebase is my submission for the hackathon conducted by *Cloudwiry*, title
 ## Architecture:
 <!-- <img width="863" alt="System Architecture" src="https://user-images.githubusercontent.com/54572908/151702378-e11a4a12-239e-492d-87df-5075be2e946f.png">
  -->
- <p align ="center>
+
 ![image](https://user-images.githubusercontent.com/54572908/151702378-e11a4a12-239e-492d-87df-5075be2e946f.png)
+  
+ <p align = "center">
+ <img src ="https://user-images.githubusercontent.com/54572908/151702378-e11a4a12-239e-492d-87df-5075be2e946f.png"/>
  </p>
 
 ## Installation
