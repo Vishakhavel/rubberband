@@ -7,7 +7,7 @@ from pydantic import FilePath
 from Storage.oauth2 import get_current_user
 from fastapi import APIRouter, FastAPI, Request, Response, status, Depends, HTTPException, File, UploadFile
 from typing import List, Optional
-from .. import schemas #from one directory up in the tree, we're importing the schemas file, that's the double dot.
+from .. import schemas 
 from .. import database
 from .. import models
 from .. import oauth2
@@ -20,8 +20,7 @@ import shutil
 from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 
-load_dotenv()  # take environment variables from .env.
-
+load_dotenv()
 
 # INITIALIZING ROUTER.
 router = APIRouter(
@@ -50,7 +49,6 @@ async def upload_zip_file(email:str,file: UploadFile = File(...), queryParams: O
 @router.get("/view")
 async def view_all_files(request: schemas.viewAllFiles,current_user: schemas.User = Depends(get_current_user) ):
     return files.show_files(request.email)
-    # return os.listdir("/Users/roviros/Desktop/files_uploaded_cloudwiry/")
 
 
 # SHARE FILES WITH OTHER USER.
@@ -72,18 +70,7 @@ async def delete_existing_file(request:schemas.deleteFile, current_user: schemas
 
     return files.move_to_trash(filename, email)
 
-
-
-    # return files.delete_file(filename,email)
-
-# @router.delete("/trash/empty")
-# async def delete_existing_file(request:schemas.deleteFile, current_user: schemas.User = Depends(get_current_user)):
-#     email = request.email
-#     filename="trash/"+request.filename
-
-#     return files.delete_file(filename,email)
-
-
+# EMPTY TRASH.
 @router.delete("/trash/empty")
 async def empty_trash(request:schemas.Email, current_user: schemas.User = Depends(get_current_user)):
     email = request.email
@@ -101,7 +88,7 @@ async def rename_existing_file(request: schemas.RenameFiles, current_user: schem
     email = request.email
     return files.rename_file(email,old_name,new_name)
 
-#DOWNLOAD FILE ALREADY UPLOADED.
+# DOWNLOAD FILE ALREADY UPLOADED.
 @router.get("/download", response_class=FileResponse)
 async def download_file(request:schemas.deleteFile, current_user: schemas.User = Depends(get_current_user)):
     email = request.email
@@ -109,12 +96,13 @@ async def download_file(request:schemas.deleteFile, current_user: schemas.User =
     return files.download_file(email,filename)
 
 
-
+# VIEW TRASH.
 @router.get("/trash/view")
 async def view_trash(request:schemas.Email, current_user: schemas.User = Depends(get_current_user)):
     email = request.email
     return files.view_trash(email)
 
+# RECOVER SPECIFIC FILE FROM TRASH.
 @router.get("/trash/recover")
 async def recover_file_from_trash(request: schemas.deleteFile, current_user: schemas.User = Depends(get_current_user)):
     email = request.email

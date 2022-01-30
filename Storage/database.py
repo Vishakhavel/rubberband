@@ -9,9 +9,7 @@ import os
 
 from dotenv import load_dotenv
 
-load_dotenv()  # take environment variables from .env.
-
-#new stuff
+load_dotenv()
 
 user = os.environ["DB_USER"]
 password = os.environ["DB_PASS"]
@@ -19,15 +17,10 @@ host = os.environ["DB_HOST"]
 port = os.environ["DB_PORT"]
 database = os.environ["DB_NAME"]
 
-
-# user = "vishakhavel"
-# password = "vishakhavel123"
-# host = "cloudwirydb.cjcritax3n0n.ap-south-1.rds.amazonaws.com"
-# port = 5432
-# database = "cloudwiryDB"
-
+# BUILDING DB CONNECTION URL.
 SQLALCHEMY_DATABASE_URL = f"postgresql://{user}:{password}@{host}:{port}/{database}"
 
+# UNCOMMENT THE LINE BELOW TO USE SQLITE INSTEAD OF PRODUCTION DB.
 # SQLALCHEMY_DATABASE_URL = "sqlite:///./storage.db"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)

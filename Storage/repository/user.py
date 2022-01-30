@@ -10,10 +10,10 @@ from .. hashing import Hash
 import shutil
 from dotenv import load_dotenv
 
-load_dotenv()  # take environment variables from .env.
-
-
+load_dotenv()
 filePath = os.getenv("BASE_FILE_DIR")
+
+
 #CREATE A NEW USER.
 def create(request:schemas.User, db:Session):
     
@@ -51,7 +51,7 @@ def get_all_user(db:Session):
 
 #DELETE USER
 def delete_user(username:str, password:str, password_confirmation:str, db:Session):    
-    #verify if correct password was entered
+    # VERIFY IF THE CORRECT PASSWORD WAS ENTERED
     if(password!=password_confirmation):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail = "Entered passwords do not match!")
     
@@ -68,17 +68,11 @@ def delete_user(username:str, password:str, password_confirmation:str, db:Sessio
 
     #DELETE USER'S FOLDER AND TRASH FROM DISK
     try:
-        # fileLocation=f"{filePath}/{username}"
+    
         shutil.rmtree(f"{filePath}/{username}")
         shutil.rmtree(f"{filePath}/{username}_trash")
-
-        # trashFilePath = f"{filePath}/{username}_trash"
-
-        # #DELETING TRASH
-        # filePathTrash=f"/Users/roviros/Desktop/files_uploaded_cloudwiry/{username}/trash"
-        # shutil.rmtree(filePathTrash)
         return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content=f"Deleted {username}'s files and account from disk and database")
-        # raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail=f"Deleted {username}'s files and account from disk and database")
+        
     except OSError as e:  ## if failed, report it back to the user ##
         print ("Error: %s - %s." % (e.filename, e.strerror))
         raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Something went wrong while deleting the user's files from the disk")

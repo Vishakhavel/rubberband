@@ -7,29 +7,20 @@ from .. import schemas, models
 import os
 import shutil
 from fastapi.responses import JSONResponse, FileResponse
-# from fastapi.responses import FileResponse
 import zipfile
 from dotenv import load_dotenv
 
-load_dotenv()  # take environment variables from .env.
-
-SOME_CONFIG_I_NEED = os.environ.get("SOME_CONFIG_I_NEED")
-
+# READING FROM ENV VARS. THIS WILL BE OVERWRITTEN BY THE ENV VARS SET IN AWS ELASTIC BEANSTALK DASHBOARD.
+load_dotenv()  
 filePath = os.getenv("BASE_FILE_DIR")
 print("file path from env vars: ",filePath)
-
 current_file_path = os.getenv("CURRENT_FILE_PATH")
 
-# LOGIC UPLOAD FILE .
+# LOGIC TO UPLOAD FILE
 def upload_file(email:str, uploaded_file: UploadFile = File(...)):
-    print(email)
-    print(email[1:-1])
-    email = email[1:-1]
+    
     filename = uploaded_file.filename
     zip_filename = uploaded_file.filename.split(".")[0]
-    print(zip_filename)
-    print(SOME_CONFIG_I_NEED)  # This will prin
-
 
 
     file_location=os.path.join(filePath, f"{email}/{uploaded_file.filename}")
@@ -38,27 +29,10 @@ def upload_file(email:str, uploaded_file: UploadFile = File(...)):
     with open(file_location, "wb+") as file_object:
         file_object.write(uploaded_file.file.read())
         
-    # print(os.ge)
 
     return {"info": f"file '{uploaded_file.filename}' has been successfully uploaded to your account"}
 
-    
-    #ZIPPING THE FILE AND STORING IT.
-
-    # zip_file = zipfile.ZipFile(f'{zip_filename}.zip', 'w')
-    # zip_file.write(f'{filePath}/{email}/{filename}', compress_type = zipfile.ZIP_DEFLATED)
-    # zip_file.close()
-    # print("zipped")
-    # shutil.copy(f'/Users/roviros/Desktop/hackathon/{zip_filename}.zip',f'{filePath}/{email}')
-    # os.remove(f"/Users/roviros/Desktop/hackathon/{zip_filename}.zip")
-    # os.remove(f'{file_location}')
-
-    # return {"info": f"file '{uploaded_file.filename}' saved as '{zip_filename}.zip'"}
-
-    #END OF ZIPPING THE FILE LOGIC.
-
-
-
+# LOGIC TO ZIP AND UPLOAD FILE.
 def upload_and_zip_file(email:str, uploaded_file: UploadFile = File(...)):
     print(email)
     print(email[1:-1])
@@ -70,9 +44,7 @@ def upload_and_zip_file(email:str, uploaded_file: UploadFile = File(...)):
     with open(file_location, "wb+") as file_object:
         file_object.write(uploaded_file.file.read())\
 
-    # return {"info": f"file '{uploaded_file.filename}' saved as '{zip_filename}'"}
     #ZIPPING THE FILE AND STORING IT.
-
     zip_file = zipfile.ZipFile(f'{zip_filename}.zip', 'w')
     zip_file.write(f'{filePath}/{email}/{filename}', compress_type = zipfile.ZIP_DEFLATED)
     zip_file.close()
@@ -82,8 +54,7 @@ def upload_and_zip_file(email:str, uploaded_file: UploadFile = File(...)):
     os.remove(f'{file_location}')
 
     return {"info": f"file '{uploaded_file.filename}' saved as '{zip_filename}.zip'"}
-
-    #END OF ZIPPING THE FILE LOGIC
+ 
 
 # LOGIC SHOW ALL FILES OF USER.
 def show_files(email:str):
@@ -94,7 +65,7 @@ def show_files(email:str):
         print(f"{filePath}/{email}")
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail = f"Oopss...Something went wrong!")
         
-# LOGIC TO SHARE FILE WITH OTHER USER BY EMAIL,.
+# LOGIC TO SHARE FILE WITH OTHER USER BY EMAIL.
 def share_file(sender:str,reciever:str,filename:str):
     # try:
     print(sender)
@@ -110,16 +81,6 @@ def share_file(sender:str,reciever:str,filename:str):
     except:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail = f"Please check if the filename: '{filename}' and the username of the receiver: '{reciever}' are correct and try again.")
     
-# LOGIC TO DELETE FILE BY NAME.
-# def delete_file(filename:str, email:str):
-#     try:
-#         delete_file_location = f"{filePath}/{email}/{filename}" #here email and the filename will come
-#         os.chmod(delete_file_location, 0o777)
-#         os.remove(f"{delete_file_location}")
-#         return JSONResponse(status_code=status.HTTP_200_OK, content="Deleted file successfully!")
-   
-#     except: 
-#         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail = f"This file - '{filename}' doesn't exist in {email}'s account!")
 
 # LOGIC TO RENAME THE FILE USING OLD AND NEW NAMES.
 def rename_file(email:str,old_name:str,new_name:str):
@@ -136,12 +97,7 @@ def rename_file(email:str,old_name:str,new_name:str):
 
 # LOGIC TO DOWNLOAD FILE BY NAME.
 def download_file(email:str, filename:str):
-    print(filename)
-    # filePath = "/Users/roviros/Desktop/files_uploaded_cloudwiry"
-
-    # download_file_location = f"{filePath}/{email}/{filename}"
-    # print(download_file_location)
-
+   
     try:
         file_download_location = f"{filePath}/{email}/{filename}"
         return file_download_location
@@ -151,7 +107,7 @@ def download_file(email:str, filename:str):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = "This file name was not found in our database!")
 
 
-
+# USER DELETES FILE, IT IS MOVED TO TRASH.
 def move_to_trash(filename: str, email: str):
 
     original = f"{filePath}/{email}/{filename}"
@@ -169,9 +125,6 @@ def move_to_trash(filename: str, email: str):
 def empty_trash_of_user(email:str):
     empty_trash_file_location = f"{filePath}/{email}_trash/"
 
-
-    # dir = "/Users/roviros/Desktop/files_uploaded_cloudwiry/{email}/trash"
-
     try:
         for files in os.listdir(empty_trash_file_location):
             path = os.path.join(empty_trash_file_location, files)
@@ -181,7 +134,6 @@ def empty_trash_of_user(email:str):
                 os.remove(path)
 
 
-        # os.remove(f"{filePath}")
         return JSONResponse(status_code=status.HTTP_200_OK, content="Trash is now empty!")
 
     except:
