@@ -33,21 +33,15 @@ cd file-management-system
 ```bash
 python3 -m venv <your-venv-name>
 ```
-
-4. Create a virtual environment
-```bash
-python3 -m venv <your-venv-name>
-```
-
-5. Activate the virtual environment
+4. Activate the virtual environment
 ```bash
 source <your-venv-name>/bin/activate
 ```
-6. Install dependencies
+5. Install dependencies
 ```bash
 pip3 install -r requirements.txt
 ```
-7. Start the server
+6. Start the server
 ```bash
 uvicorn application:app --reload
 ```
