@@ -208,5 +208,3 @@ def recover_file_from_trash(filename:str, email:str):
     except:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail = f"This file - '{filename}' doesn't exist in {email}'s trash!")
     
-    
-
