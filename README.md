@@ -48,7 +48,7 @@ uvicorn application:app --reload
 
 ## Usage
 Create a new Postman environment and create these variables.
-Open the Postman collection file "collection_cloudwiry" and use it to test the environment.
+Download this [Postman collection](https://drive.google.com/file/d/1ngA5W9vZWvkGp0QMgqNKU6DrZfguDFzV/view?usp=sharing) file "collection_cloudwiry" and use it to test the environment.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
