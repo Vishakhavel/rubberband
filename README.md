@@ -18,21 +18,28 @@ This codebase is my submission for the hackathon conducted by *Cloudwiry*, title
  <img src ="https://user-images.githubusercontent.com/54572908/151702378-e11a4a12-239e-492d-87df-5075be2e946f.png"/>
  </p>
 
+## Description:
+In this solution, users can interact with a FastAPI application, which acts as a blob storage system. The core logic of my solution is that an AWS EFS volume, which is automatically mounted to EC2 instances as a part of AWS Elastic Beanstalk environment, will serve as a distributed storage disk. The Beanstalk environment also has an Application Load Balancer. Users from multiple availbility zones can access the same storage system (The EFS volume), even if they are routed to different servers(EC2 Instances) by the Application Load Balancer. An AWS RDS postgres instance stores the usernames, encrypted passwords, names and IDs of the users. 
+
+
+## Key Features:
+
+- [x] User Account creation/deletion
+- [x] User Authentication, Password Encryption and API Protection
+- [x] Upload, Rename, Share, Download, Delete file functionalities
+
+## Bonus features:
+- [x] Trash, which stores deleted files until emptied, for every user
+- [x] Autoscaling, Load Balancing and Distributed file storage
+- [x] CICD for faster bug fixes and quicker releases
+- [x] File compression
+
+
 ## Installation
 
 This application has been deployed to AWS Beanstalk. Here is the deployed URL:
 [Cloudwiry Application](http://cloudwiry-backend-fastapi.ap-south-1.elasticbeanstalk.com/docs) 
 
-
-## Features:
-
-- [x] User Account creation/deletion
-- [x] User Authentication, Password Encryption and API Protection
-- [x] Upload, Rename, Share, Download, Delete file functionalities
-- [x] File compression
-- [x] Trash, which stores deleted files until emptied, for every user
-- [x] Autoscaling, Load Balancing and Distributed file storage
-- [x] CICD for faster bug fixes and quicker releases
 
 ## Instructions:
 
