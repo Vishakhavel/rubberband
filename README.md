@@ -7,7 +7,8 @@ This codebase is my submission for the hackathon conducted by *Cloudwiry*, title
 [![FastAPI](https://img.shields.io/badge/Framework-FastAPI-brightgreen)](https://fastapi.tiangolo.com/)
 [![AWS](https://img.shields.io/badge/CSP-AWS-brightgreen)](https://aws.amazon.com/)
 
-
+## Video Link:
+ [Click here](https://youtu.be/txjaamv01zQ) for the video demo, and explanation.
 ## Architecture:
  <p align = "center">
  <img src ="https://user-images.githubusercontent.com/54572908/151702378-e11a4a12-239e-492d-87df-5075be2e946f.png"/>
