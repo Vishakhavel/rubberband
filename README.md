@@ -9,13 +9,18 @@ This codebase is my submission for the hackathon conducted by *Cloudwiry*, title
 
 
 ## Architecture:
-<!-- <img width="863" alt="System Architecture" src="https://user-images.githubusercontent.com/54572908/151702378-e11a4a12-239e-492d-87df-5075be2e946f.png">
- -->
-
-<!-- ![image](https://user-images.githubusercontent.com/54572908/151702378-e11a4a12-239e-492d-87df-5075be2e946f.png)
-   -->
  <p align = "center">
  <img src ="https://user-images.githubusercontent.com/54572908/151702378-e11a4a12-239e-492d-87df-5075be2e946f.png"/>
+ </p>
+ 
+ <p align = "center">
+ Stack: 
+ 1. AWS RDS - User data storage
+ 2. AWS Elastic Beanstalk - managed servers
+ 3. AWS Route53 - DNS
+ 4. AWS Codepipeline, Cloudwatch - CICD
+ 5. FastAPI - Web framework
+ 
  </p>
 
 ## Description:
