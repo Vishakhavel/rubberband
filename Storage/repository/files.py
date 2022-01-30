@@ -18,6 +18,8 @@ SOME_CONFIG_I_NEED = os.environ.get("SOME_CONFIG_I_NEED")
 filePath = os.getenv("BASE_FILE_DIR")
 print("file path from env vars: ",filePath)
 
+current_file_path = os.getenv("CURRENT_FILE_PATH")
+
 # LOGIC UPLOAD FILE .
 def upload_file(email:str, uploaded_file: UploadFile = File(...)):
     print(email)
@@ -33,8 +35,8 @@ def upload_file(email:str, uploaded_file: UploadFile = File(...)):
     file_location=os.path.join(filePath, f"{email}/{uploaded_file.filename}")
     
         
-    with open(file_location, "w+") as file_object:
-        file_object.write(uploaded_file.file.read())\
+    with open(file_location, "wb+") as file_object:
+        file_object.write(uploaded_file.file.read())
         
     # print(os.ge)
 
@@ -75,8 +77,8 @@ def upload_and_zip_file(email:str, uploaded_file: UploadFile = File(...)):
     zip_file.write(f'{filePath}/{email}/{filename}', compress_type = zipfile.ZIP_DEFLATED)
     zip_file.close()
     print("zipped")
-    shutil.copy(f'/Users/roviros/Desktop/hackathon/{zip_filename}.zip',f'{filePath}/{email}')
-    os.remove(f"/Users/roviros/Desktop/hackathon/{zip_filename}.zip")
+    shutil.copy(f'{current_file_path}/{zip_filename}.zip',f'{filePath}/{email}')
+    os.remove(f"/{current_file_path}/{zip_filename}.zip")
     os.remove(f'{file_location}')
 
     return {"info": f"file '{uploaded_file.filename}' saved as '{zip_filename}.zip'"}
@@ -135,14 +137,14 @@ def rename_file(email:str,old_name:str,new_name:str):
 # LOGIC TO DOWNLOAD FILE BY NAME.
 def download_file(email:str, filename:str):
     print(filename)
-    filePath = "/Users/roviros/Desktop/files_uploaded_cloudwiry"
+    # filePath = "/Users/roviros/Desktop/files_uploaded_cloudwiry"
 
     # download_file_location = f"{filePath}/{email}/{filename}"
     # print(download_file_location)
 
     try:
-        filePath = f"{filePath}/{email}/{filename}"
-        return filePath
+        file_download_location = f"{filePath}/{email}/{filename}"
+        return file_download_location
     
     except:
         # print(filePath)

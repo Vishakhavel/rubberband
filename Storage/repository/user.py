@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 load_dotenv()  # take environment variables from .env.
 
 
-filePath = os.getenv("BASE_DIR")
+filePath = os.getenv("BASE_FILE_DIR")
 #CREATE A NEW USER.
 def create(request:schemas.User, db:Session):
     
@@ -38,6 +38,7 @@ def create(request:schemas.User, db:Session):
             return new_user
         
         except:
+            print(f'{filePath}/{folder}')
             email = request.email
             raise HTTPException(status_code = status.HTTP_409_CONFLICT, detail = f"Folder could not be created for user {email}")
 
