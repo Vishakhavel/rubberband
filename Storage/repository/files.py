@@ -21,6 +21,7 @@ def upload_file(email:str, uploaded_file: UploadFile = File(...)):
     
     filename = uploaded_file.filename
     zip_filename = uploaded_file.filename.split(".")[0]
+    email = email[1:-1]
 
 
     file_location=os.path.join(filePath, f"{email}/{uploaded_file.filename}")
