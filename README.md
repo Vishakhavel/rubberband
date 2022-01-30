@@ -9,8 +9,8 @@ This codebase is my submission for the hackathon conducted by *Cloudwiry*, title
 
 
 ## Architecture
-<img width="863" alt="System Architecture" src="https://user-images.githubusercontent.com/54572908/151702378-e11a4a12-239e-492d-87df-5075be2e946f.png">
-
+<!-- <img width="863" alt="System Architecture" src="https://user-images.githubusercontent.com/54572908/151702378-e11a4a12-239e-492d-87df-5075be2e946f.png">
+ -->
 ![image](https://user-images.githubusercontent.com/54572908/151702378-e11a4a12-239e-492d-87df-5075be2e946f.png)
 
 ## Installation
