@@ -45,8 +45,7 @@ In this solution, users can interact with a FastAPI application, which acts as a
 
 ## Installation
 
-This application has been deployed to AWS Beanstalk. Here is the deployed URL:
-[Cloudwiry Application](http://cloudwiry-backend-fastapi.ap-south-1.elasticbeanstalk.com/docs) 
+This application has been deployed to AWS Beanstalk.
 
 
 ## Instructions:
