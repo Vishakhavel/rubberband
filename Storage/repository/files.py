@@ -34,7 +34,7 @@ def upload_file(email:str, uploaded_file: UploadFile = File(...)):
         return {"info": f"file '{uploaded_file.filename}' has been successfully uploaded to your account"}
 
     except:
-        raise HTTPException(status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail = f"Oopss...Something went wrong!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail = f"Oopss...Something went wrong!")
 
 
 # LOGIC TO ZIP AND UPLOAD FILE.
@@ -62,7 +62,7 @@ def upload_and_zip_file(email:str, uploaded_file: UploadFile = File(...)):
         return {"info": f"file '{uploaded_file.filename}' saved as '{zip_filename}.zip'"}
     
     except:
-        raise HTTPException(status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail = f"Oopss...Something went wrong!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail = f"Oopss...Something went wrong!")
  
 
 # LOGIC SHOW ALL FILES OF USER.
@@ -72,7 +72,7 @@ def show_files(email:str):
 
     except:
         print(f"{filePath}/{email}")
-        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail = f"Oopss...Something went wrong!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail = f"Oopss...Something went wrong!")
         
 # LOGIC TO SHARE FILE WITH OTHER USER BY EMAIL.
 def share_file(sender:str,reciever:str,filename:str):
