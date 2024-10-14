@@ -1,171 +1,184 @@
-
-from inspect import formatannotationrelativeto
 from pydantic import FilePath
 from sqlalchemy.orm import Session
-from fastapi import  status, HTTPException, File, UploadFile
-from .. import schemas, models
+from fastapi import status, HTTPException, File, UploadFile, APIRouter
+from fastapi.responses import JSONResponse, FileResponse
 import os
 import shutil
-from fastapi.responses import JSONResponse, FileResponse
 import zipfile
 from dotenv import load_dotenv
 
-# READING FROM ENV VARS. THIS WILL BE OVERWRITTEN BY THE ENV VARS SET IN AWS ELASTIC BEANSTALK DASHBOARD.
+# READING FROM ENV VARS
 load_dotenv()  
 filePath = os.getenv("BASE_FILE_DIR")
-print("file path from env vars: ",filePath)
 current_file_path = os.getenv("CURRENT_FILE_PATH")
 
+router = APIRouter()
+
 # LOGIC TO UPLOAD FILE
-def upload_file(email:str, uploaded_file: UploadFile = File(...)):
-    
-    filename = uploaded_file.filename
-    zip_filename = uploaded_file.filename.split(".")[0]
-    email = email[1:-1]
-
-
-    file_location=os.path.join(filePath, f"{email}/{uploaded_file.filename}")
+@router.post("/upload-file")
+def upload_file(email: str, uploaded_file: UploadFile = File(...)):
+    email = email.strip('"')  # remove surrounding quotes if present
+    file_location = os.path.join(filePath, f"{email}/{uploaded_file.filename}")
     
     try:
-        with open(file_location, "wb+") as file_object:
+        os.makedirs(os.path.dirname(file_location), exist_ok=True)  # ensure directory exists
+        with open(file_location, "wb") as file_object:
             file_object.write(uploaded_file.file.read())
-            
+        return JSONResponse(status_code=status.HTTP_201_CREATED, content={
+            "message": f"File '{uploaded_file.filename}' successfully uploaded to '{email}'"
+        })
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"File upload failed: {str(e)}")
 
-        return {"info": f"file '{uploaded_file.filename}' has been successfully uploaded to your account"}
 
-    except:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail = f"Oopss...Something went wrong!")
-
-
-# LOGIC TO ZIP AND UPLOAD FILE.
-def upload_and_zip_file(email:str, uploaded_file: UploadFile = File(...)):
-    try:
-        print(email)
-        print(email[1:-1])
-        email = email[1:-1]
-        filename = uploaded_file.filename
-        zip_filename = uploaded_file.filename.split(".")[0]
-        print(zip_filename)
-        file_location=os.path.join(filePath, f"{email}/{uploaded_file.filename}")        
-        with open(file_location, "wb+") as file_object:
-            file_object.write(uploaded_file.file.read())\
-
-        #ZIPPING THE FILE AND STORING IT.
-        zip_file = zipfile.ZipFile(f'{zip_filename}.zip', 'w')
-        zip_file.write(f'{filePath}/{email}/{filename}', compress_type = zipfile.ZIP_DEFLATED)
-        zip_file.close()
-        print("zipped")
-        shutil.copy(f'{current_file_path}/{zip_filename}.zip',f'{filePath}/{email}')
-        os.remove(f"/{current_file_path}/{zip_filename}.zip")
-        os.remove(f'{file_location}')
-
-        return {"info": f"file '{uploaded_file.filename}' saved as '{zip_filename}.zip'"}
+# LOGIC TO ZIP AND UPLOAD FILE
+@router.post("/upload-zip-file")
+def upload_and_zip_file(email: str, uploaded_file: UploadFile = File(...)):
+    email = email.strip('"')
+    filename = uploaded_file.filename
+    zip_filename = os.path.splitext(filename)[0]  # get filename without extension
+    file_location = os.path.join(filePath, f"{email}/{filename}")
     
-    except:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail = f"Oopss...Something went wrong!")
- 
-
-# LOGIC SHOW ALL FILES OF USER.
-def show_files(email:str):
     try:
-        return os.listdir(f"{filePath}/{email}")
+        os.makedirs(os.path.dirname(file_location), exist_ok=True)  # ensure directory exists
+        with open(file_location, "wb") as file_object:
+            file_object.write(uploaded_file.file.read())
 
-    except:
-        print(f"{filePath}/{email}")
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail = f"Oopss...Something went wrong!")
-        
-# LOGIC TO SHARE FILE WITH OTHER USER BY EMAIL.
-def share_file(sender:str,reciever:str,filename:str):
-    # try:
-    print(sender)
-    print(reciever[1:-1])
-    print(filename)
+        zip_file_path = os.path.join(current_file_path, f'{zip_filename}.zip')
+        with zipfile.ZipFile(zip_file_path, 'w') as zip_file:
+            zip_file.write(file_location, arcname=filename, compress_type=zipfile.ZIP_DEFLATED)
+
+        shutil.copy(zip_file_path, os.path.join(filePath, f"{email}/{zip_filename}.zip"))
+        os.remove(zip_file_path)  # clean up the zip from the temp location
+        os.remove(file_location)  # clean up the original uploaded file
+
+        return JSONResponse(status_code=status.HTTP_201_CREATED, content={
+            "message": f"File '{filename}' saved as '{zip_filename}.zip'"
+        })
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Zipping failed: {str(e)}")
+
+
+# LOGIC TO SHOW ALL FILES OF USER
+@router.get("/files/{email}")
+def show_files(email: str):
+    try:
+        files = os.listdir(f"{filePath}/{email}")
+        return JSONResponse(status_code=status.HTTP_200_OK, content={"files": files})
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error listing files: {str(e)}")
+
+
+# LOGIC TO SHARE FILE WITH OTHER USER
+@router.post("/share-file")
+def share_file(sender: str, receiver: str, filename: str):
+    sender = sender.strip('"')
+    receiver = receiver.strip('"')
+
+    original = os.path.join(filePath, f"{sender}/{filename}")
+    target = os.path.join(filePath, f"{receiver}/{filename}")
     
-    original = f"{filePath}/{sender}/{filename}"
-    target = f"{filePath}/{reciever}/{filename}"
     try:
         shutil.copyfile(original, target)
-        return JSONResponse(status_code=status.HTTP_200_OK, content=f"File shared successfully to {reciever}")
-    
-    except:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail = f"Please check if the filename: '{filename}' and the username of the receiver: '{reciever}' are correct and try again.")
-    
+        return JSONResponse(status_code=status.HTTP_200_OK, content={
+            "message": f"File '{filename}' shared successfully with '{receiver}'"
+        })
+    except FileNotFoundError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"File '{filename}' not found")
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"File sharing failed: {str(e)}")
 
-# LOGIC TO RENAME THE FILE USING OLD AND NEW NAMES.
-def rename_file(email:str,old_name:str,new_name:str):
-    sourceFilePath = f"{filePath}/{email}/{old_name}"
-    destinationFilePath = f"{filePath}/{email}/{new_name}"
+
+# LOGIC TO RENAME FILE
+@router.put("/rename-file")
+def rename_file(email: str, old_name: str, new_name: str):
+    source_file = os.path.join(filePath, f"{email}/{old_name}")
+    destination_file = os.path.join(filePath, f"{email}/{new_name}")
 
     try:
-        os.rename(sourceFilePath, destinationFilePath)
-        return JSONResponse(status_code=status.HTTP_200_OK, content=f"File {old_name} successfully renamed to {new_name}")
-    
-    except:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"This file name was not found in our database!")
+        os.rename(source_file, destination_file)
+        return JSONResponse(status_code=status.HTTP_200_OK, content={
+            "message": f"File '{old_name}' successfully renamed to '{new_name}'"
+        })
+    except FileNotFoundError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"File '{old_name}' not found")
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Renaming failed: {str(e)}")
 
 
-# LOGIC TO DOWNLOAD FILE BY NAME.
-def download_file(email:str, filename:str):
-   
-    try:
-        file_download_location = f"{filePath}/{email}/{filename}"
-        return file_download_location
-    
-    except:
-        # print(filePath)
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = "This file name was not found in our database!")
+# LOGIC TO DOWNLOAD FILE
+@router.get("/download-file/{email}/{filename}")
+def download_file(email: str, filename: str):
+    file_location = os.path.join(filePath, f"{email}/{filename}")
+
+    if os.path.exists(file_location):
+        return FileResponse(path=file_location, filename=filename, status_code=status.HTTP_200_OK)
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"File '{filename}' not found")
 
 
-# USER DELETES FILE, IT IS MOVED TO TRASH.
+# LOGIC TO MOVE FILE TO TRASH
+@router.delete("/move-to-trash")
 def move_to_trash(filename: str, email: str):
-
-    original = f"{filePath}/{email}/{filename}"
-    target = f"{filePath}/{email}_trash/{filename}"
-    try:
-        shutil.copyfile(original, target)
-        os.remove(f"{original}")
-        return JSONResponse(status_code=status.HTTP_200_OK, content=f"Deleted {filename} file successfully! You can recover this file form the trash anytime.")
-    
-    except:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail = f"This file - '{filename}' doesn't exist in {email}'s account!")
-
-
-
-def empty_trash_of_user(email:str):
-    empty_trash_file_location = f"{filePath}/{email}_trash/"
+    original = os.path.join(filePath, f"{email}/{filename}")
+    trash_dir = os.path.join(filePath, f"{email}_trash")
+    os.makedirs(trash_dir, exist_ok=True)
+    target = os.path.join(trash_dir, filename)
 
     try:
-        for files in os.listdir(empty_trash_file_location):
-            path = os.path.join(empty_trash_file_location, files)
-            try:
-                shutil.rmtree(path)
-            except OSError:
-                os.remove(path)
+        shutil.move(original, target)
+        return JSONResponse(status_code=status.HTTP_200_OK, content={
+            "message": f"File '{filename}' moved to trash"
+        })
+    except FileNotFoundError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"File '{filename}' not found")
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error moving file to trash: {str(e)}")
 
 
-        return JSONResponse(status_code=status.HTTP_200_OK, content="Trash is now empty!")
+# LOGIC TO EMPTY USER'S TRASH
+@router.delete("/empty-trash/{email}")
+def empty_trash(email: str):
+    trash_dir = os.path.join(filePath, f"{email}_trash")
 
-    except:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail = "Trash is already empty!")
-
-
-
-def view_trash(email:str):
     try:
-        return os.listdir(f"{filePath}/{email}_trash")
+        if os.path.exists(trash_dir):
+            shutil.rmtree(trash_dir)
+            os.makedirs(trash_dir)  # recreate the empty trash folder
+            return JSONResponse(status_code=status.HTTP_200_OK, content="Trash emptied successfully")
+        else:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trash directory not found")
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error emptying trash: {str(e)}")
 
-    except:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail = f"Oopss...Looks like something went wrong from our side!")
 
+# LOGIC TO VIEW USER'S TRASH
+@router.get("/view-trash/{email}")
+def view_trash(email: str):
+    trash_dir = os.path.join(filePath, f"{email}_trash")
 
-def recover_file_from_trash(filename:str, email:str):
-    original = f"{filePath}/{email}_trash/{filename}"
-    target = f"{filePath}/{email}/{filename}"
     try:
-        shutil.copyfile(original, target)
-        os.remove(f"{original}")
-        return JSONResponse(status_code=status.HTTP_200_OK, content=f"File {filename} recovered successfully")
-    
-    except:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail = f"This file - '{filename}' doesn't exist in {email}'s trash!")
-    
+        if os.path.exists(trash_dir):
+            files = os.listdir(trash_dir)
+            return JSONResponse(status_code=status.HTTP_200_OK, content={"trash_files": files})
+        else:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trash directory not found")
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error viewing trash: {str(e)}")
+
+
+# LOGIC TO RECOVER FILE FROM TRASH
+@router.put("/recover-file")
+def recover_file_from_trash(filename: str, email: str):
+    original = os.path.join(filePath, f"{email}_trash/{filename}")
+    target = os.path.join(filePath, f"{email}/{filename}")
+
+    try:
+        shutil.move(original, target)
+        return JSONResponse(status_code=status.HTTP_200_OK, content={
+            "message": f"File '{filename}' recovered from trash"
+        })
+    except FileNotFoundError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"File '{filename}' not found in trash")
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error recovering file: {str(e)}")
